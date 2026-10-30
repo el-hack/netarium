@@ -1,12 +1,22 @@
 import { Menu } from 'lucide-react';
 import { navigation, type Page } from '../navigation';
-export function Topbar({ page, onMenu }: { page: Page; onMenu: () => void }) {
+export function Topbar({
+  page,
+  menuOpen,
+  onMenu,
+}: {
+  page: Page;
+  menuOpen: boolean;
+  onMenu: () => void;
+}) {
   return (
     <header className="topbar">
       <div className="breadcrumb">
         <button
           className="icon-button mobile-menu"
           aria-label="Ouvrir la navigation"
+          aria-expanded={menuOpen}
+          aria-controls="primary-sidebar"
           onClick={onMenu}
         >
           <Menu size={20} />

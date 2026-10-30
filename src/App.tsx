@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
   Orbit,
-  ArrowUpRight,
-  ScanLine,
   ChevronDown,
-  Download,
   CircleHelp,
   Radio,
   Check,
@@ -21,6 +18,7 @@ import type { Page } from './navigation';
 import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { Metrics } from './components/Metrics';
+import { PageHeader } from './components/PageHeader';
 import { DeviceList } from './components/DeviceList';
 import { DeviceDrawer } from './components/DeviceDrawer';
 import { NetworkMap } from './components/NetworkMap';
@@ -36,6 +34,7 @@ export default function App() {
   const [starting, setStarting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [help, setHelp] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const [optimisticScan, setOptimisticScan] = useState<Scan | null>(null);
   function navigate(next: Page) {
     setPage(next);
@@ -86,78 +85,33 @@ export default function App() {
       setActionError((error as Error).message);
     }
   }
-  const title =
-    page === 'overview' ? (
-      <>
-        Votre réseau, <em>sous un nouveau jour.</em>
-      </>
-    ) : page === 'devices' ? (
-      <>
-        Chaque appareil <em>a sa place.</em>
-      </>
-    ) : page === 'history' ? (
-      <>
-        Le réseau change. <em>Gardez le fil.</em>
-      </>
-    ) : (
-      <>
-        Un observatoire <em>à votre mesure.</em>
-      </>
-    );
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
         Aller au contenu
       </a>
+      {menuOpen && <div className="nav-backdrop" onClick={closeMenu} aria-hidden="true" />}
       <Sidebar
         page={page}
         menuOpen={menuOpen}
+        onClose={closeMenu}
         deviceCount={devices.length}
         help={help}
         onNavigate={navigate}
-        onHelp={() => setHelp(!help)}
+        onHelp={() => {
+          setHelp(!help);
+          setMenuOpen(false);
+        }}
       />
-      <div className="app-content">
-        <Topbar page={page} onMenu={() => setMenuOpen(!menuOpen)} />
+      <div className="app-content" inert={menuOpen}>
+        <Topbar page={page} menuOpen={menuOpen} onMenu={() => setMenuOpen(!menuOpen)} />
         <main id="main">
-          <div className="page-heading">
-            <div>
-              <div className="page-kicker">
-                <span className="little-line" />
-                LE SENS DES CONNEXIONS
-              </div>
-              <h1>{title}</h1>
-              <p>
-                {page === 'overview'
-                  ? 'Explorez, comprenez et retrouvez les appareils qui vous entourent.'
-                  : page === 'devices'
-                    ? 'Des observations réelles, des identités que vous pouvez enrichir.'
-                    : page === 'history'
-                      ? 'Des instantanés pour comprendre ce qui évolue chez vous.'
-                      : 'Une collecte maîtrisée, des données qui restent chez vous.'}
-              </p>
-            </div>
-            <div className="heading-actions">
-              <a
-                className="button secondary export-top"
-                href="/api/export?format=json"
-                download
-                aria-label="Exporter les données JSON"
-              >
-                <Download size={16} />
-                <span>Exporter</span>
-              </a>
-              <button
-                className="button primary"
-                disabled={scanning || !network || Boolean(error)}
-                onClick={() => void scan()}
-              >
-                {scanning ? <LoaderCircle className="spin" size={16} /> : <ScanLine size={16} />}
-                <span>{scanning ? 'Découverte en cours' : 'Découvrir le réseau'}</span>
-                {!scanning && <ArrowUpRight size={15} />}
-              </button>
-            </div>
-          </div>
+          <PageHeader
+            page={page}
+            scanning={scanning}
+            disabled={!network || Boolean(error)}
+            onScan={() => void scan()}
+          />
           {help && (
             <section className="help-banner">
               <div>
@@ -293,7 +247,13 @@ export default function App() {
                 </>
               )}
               {page === 'devices' && <DeviceList devices={devices} onSelect={selectDevice} />}
-              {page === 'history' && <History scans={data.scans} onSelect={selectDevice} />}
+              {page === 'history' && (
+                <History
+                  key={network?.scanCidr ?? 'all'}
+                  scans={data.scans.filter((scan) => !network || scan.network === network.scanCidr)}
+                  onSelect={selectDevice}
+                />
+              )}
               {page === 'settings' && (
                 <Settings data={data} onSaved={refresh} onPassive={() => void scan(true)} />
               )}

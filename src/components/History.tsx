@@ -26,7 +26,11 @@ export function History({
   const [before, setBefore] = useState<Snapshot | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const effective = selected || completed[0]?.id || '';
+  const effective = completed.some((scan) => scan.id === selected)
+    ? selected
+    : completed[0]?.id || '';
+  const effectiveBaseline =
+    baseline !== effective && completed.some((scan) => scan.id === baseline) ? baseline : '';
   useEffect(() => {
     let cancelled = false;
     setError('');
@@ -36,7 +40,7 @@ export function History({
     if (!effective) return;
     Promise.all([
       api<Snapshot>(`/snapshots/${effective}`),
-      baseline ? api<Snapshot>(`/snapshots/${baseline}`) : Promise.resolve(null),
+      effectiveBaseline ? api<Snapshot>(`/snapshots/${effectiveBaseline}`) : Promise.resolve(null),
     ])
       .then(([current, previous]) => {
         if (!cancelled) {
@@ -53,7 +57,7 @@ export function History({
     return () => {
       cancelled = true;
     };
-  }, [effective, baseline]);
+  }, [effective, effectiveBaseline]);
   const diff = snapshot && before ? compareSnapshots(before.devices, snapshot.devices) : null;
   const differentScope = Boolean(
     snapshot && before && snapshot.scan.network !== before.scan.network,
@@ -75,7 +79,11 @@ export function History({
                 <button
                   disabled={scan.status !== 'complete'}
                   className={effective === scan.id ? 'active' : ''}
-                  onClick={() => setSelected(scan.id)}
+                  aria-pressed={effective === scan.id}
+                  onClick={() => {
+                    setSelected(scan.id);
+                    if (baseline === scan.id) setBaseline('');
+                  }}
                 >
                   <span className={`timeline-symbol ${scan.status}`}>
                     {scan.status === 'complete' ? (
@@ -119,7 +127,11 @@ export function History({
           <p className="muted">Comparez deux observations de votre réseau.</p>
           <label className="field">
             Comparer l’instantané sélectionné avec
-            <select value={baseline} onChange={(event) => setBaseline(event.target.value)}>
+            <select
+              disabled={completed.length < 2}
+              value={effectiveBaseline}
+              onChange={(event) => setBaseline(event.target.value)}
+            >
               <option value="">Choisir un instantané de référence</option>
               {completed
                 .filter((scan) => scan.id !== effective)
@@ -204,7 +216,11 @@ export function History({
           ) : (
             <div className="comparison-placeholder">
               <Camera size={26} />
-              <p>Un état du réseau, conservé fidèlement.</p>
+              <p>
+                {completed.length < 2
+                  ? 'Deux collectes pour voir ce qui change.'
+                  : 'Choisissez un instantané de référence.'}
+              </p>
               <small>Les absences ne prouvent pas une déconnexion.</small>
             </div>
           )}

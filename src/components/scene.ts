@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { Device } from '../../shared/types';
 import { deviceName } from '../lib';
 export interface SceneHandle {
@@ -14,136 +15,203 @@ export function createScene(
   flat = false,
 ): SceneHandle {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#f1f4ef');
-  scene.fog = new THREE.Fog('#f1f4ef', 25, 55);
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: false,
-    powerPreference: 'low-power',
-  });
+  scene.background = new THREE.Color('#f4f7ee');
+  scene.fog = new THREE.Fog('#f4f7ee', 55, 150);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setClearColor('#f1f4ef');
   renderer.domElement.setAttribute('aria-hidden', 'true');
   container.appendChild(renderer.domElement);
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 80);
-  const initial = flat ? new THREE.Vector3(0, 22, 0.01) : new THREE.Vector3(13, 13, 17);
-  camera.position.copy(initial);
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 250);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0);
-  controls.enableDamping = false;
   controls.enablePan = false;
   controls.enableRotate = !flat;
-  controls.minDistance = 11;
-  controls.maxDistance = 38;
-  controls.maxPolarAngle = Math.PI / 2.12;
-  controls.update();
-  scene.add(new THREE.HemisphereLight('#ffffff', '#b7c3b4', 3));
-  const light = new THREE.DirectionalLight('#ffffff', 4);
-  light.position.set(3, 12, 5);
+  controls.minDistance = 10;
+  controls.maxDistance = 150;
+  controls.maxPolarAngle = Math.PI / 2.15;
+  scene.add(new THREE.HemisphereLight('#ffffff', '#d3ddc4', 2.7));
+  const light = new THREE.DirectionalLight('#ffffff', 3);
+  light.position.set(-4, 12, 7);
   scene.add(light);
-  const accent = new THREE.DirectionalLight('#c3d4c4', 2);
-  accent.position.set(-5, 3, -4);
-  scene.add(accent);
+  const rim = new THREE.DirectionalLight('#d0e3c2', 1.2);
+  rim.position.set(5, 3, -4);
+  scene.add(rim);
   const resources: (THREE.BufferGeometry | THREE.Material)[] = [];
-  function mesh(geometry: THREE.BufferGeometry, color: string, roughness = 0.55) {
-    const material = new THREE.MeshStandardMaterial({ color, roughness, metalness: 0.04 });
+  function mesh(geometry: THREE.BufferGeometry, color: string) {
+    const material = new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.02 });
     resources.push(geometry, material);
     return new THREE.Mesh(geometry, material);
   }
-  // Rings and paths represent membership in a scope, not measured physical links.
-  function ring(radius: number, color: string, opacity: number) {
+  function box(width: number, height: number, depth: number, color: string) {
+    return mesh(
+      new RoundedBoxGeometry(width, height, depth, 3, Math.min(width, height, depth) * 0.18),
+      color,
+    );
+  }
+  function shadow(x: number, z: number, radius: number) {
+    const geometry = new THREE.CircleGeometry(radius, 48);
+    const material = new THREE.MeshBasicMaterial({
+      color: '#718b5e',
+      transparent: true,
+      opacity: 0.09,
+      depthWrite: false,
+    });
+    resources.push(geometry, material);
+    const disc = new THREE.Mesh(geometry, material);
+    disc.rotation.x = -Math.PI / 2;
+    disc.position.set(x, -0.42, z);
+    scene.add(disc);
+  }
+  // These rings and paths express scope membership, never physical wiring or live traffic.
+  function ring(radius: number, opacity: number) {
     const points = Array.from(
-      { length: 161 },
+      { length: 129 },
       (_, i) =>
         new THREE.Vector3(
-          Math.cos((i / 160) * Math.PI * 2) * radius,
-          -0.28,
-          Math.sin((i / 160) * Math.PI * 2) * radius,
+          Math.cos((i / 128) * Math.PI * 2) * radius,
+          -0.38,
+          Math.sin((i / 128) * Math.PI * 2) * radius,
         ),
     );
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+    const material = new THREE.LineBasicMaterial({ color: '#c9d8ba', transparent: true, opacity });
     resources.push(geometry, material);
     scene.add(new THREE.LineLoop(geometry, material));
   }
-  ring(3.4, '#a5b6a2', 0.5);
-  ring(6.2, '#b1c0ad', 0.5);
-  ring(8.7, '#c2cdbf', 0.45);
-  const grid = new THREE.GridHelper(70, 70, '#d6dfd1', '#e1e7dd');
-  grid.position.y = -0.6;
-  scene.add(grid);
-  resources.push(
-    grid.geometry,
-    ...(Array.isArray(grid.material) ? grid.material : [grid.material]),
-  );
-  const core = mesh(new THREE.SphereGeometry(0.8, 48, 32), '#526e59');
-  core.position.y = 0.35;
+  ring(3.2, 0.7);
+  ring(5.6, 0.75);
+  ring(8, 0.45);
+  const core = new THREE.Group();
+  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.24, 64), '#e1ead5');
+  base.position.y = -0.2;
+  core.add(base);
+  const sphere = mesh(new THREE.SphereGeometry(0.75, 48, 32), '#63845a');
+  sphere.position.y = 0.6;
+  core.add(sphere);
+  const halo = mesh(new THREE.TorusGeometry(1.05, 0.035, 12, 100), '#9bb37f');
+  halo.position.y = 0.6;
+  halo.rotation.set(1.05, 0.3, -0.4);
+  core.add(halo);
   scene.add(core);
-  const halo = mesh(new THREE.TorusGeometry(1.24, 0.035, 12, 100), '#8ba779');
-  halo.rotation.x = Math.PI / 2.5;
-  halo.rotation.z = -0.4;
-  halo.position.y = 0.35;
-  scene.add(halo);
-  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.18, 64), '#d9e1d2');
-  base.position.y = -0.42;
-  scene.add(base);
-  const labelRoot = document.createElement('div');
-  labelRoot.className = 'scene-labels';
-  container.appendChild(labelRoot);
+  shadow(0, 0, 1.6);
+  function deviceModel(device: Device) {
+    const group = new THREE.Group();
+    const tone =
+      device.status === 'unseen' ? '#b8c2aa' : device.status === 'cached' ? '#c9b48e' : '#88a66a';
+    const category =
+      device.category !== 'unknown'
+        ? device.category
+        : device.role === 'self'
+          ? 'computer'
+          : device.role === 'gateway'
+            ? 'network'
+            : 'unknown';
+    const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '#fdfef8');
+    pedestal.position.y = -0.24;
+    group.add(pedestal);
+    if (category === 'computer' || category === 'media') {
+      const screen = box(1.3, 0.86, 0.12, tone);
+      screen.position.y = 0.55;
+      group.add(screen);
+      const glass = box(1.1, 0.65, 0.02, '#e3edd9');
+      glass.position.set(0, 0.58, 0.075);
+      group.add(glass);
+      const bar = box(0.65, 0.045, 0.025, '#a8c18c');
+      bar.position.set(-0.13, 0.66, 0.095);
+      group.add(bar);
+      const bar2 = box(0.42, 0.045, 0.025, '#bdcea9');
+      bar2.position.set(-0.24, 0.51, 0.095);
+      group.add(bar2);
+      const stem = box(0.12, 0.25, 0.13, tone);
+      stem.position.y = 0.01;
+      group.add(stem);
+      const foot = box(0.65, 0.06, 0.3, tone);
+      foot.position.y = -0.12;
+      group.add(foot);
+    } else if (category === 'network') {
+      const router = box(1.25, 0.28, 0.75, tone);
+      router.position.y = 0.05;
+      group.add(router);
+      for (const x of [-0.43, 0.43]) {
+        const antenna = box(0.045, 0.7, 0.045, '#657f54');
+        antenna.position.set(x, 0.46, -0.23);
+        antenna.rotation.z = x * 0.15;
+        group.add(antenna);
+      }
+      for (let i = 0; i < 3; i++) {
+        const led = mesh(new THREE.SphereGeometry(0.035, 12, 8), '#f2f8df');
+        led.position.set(-0.3 + i * 0.15, 0.07, 0.385);
+        group.add(led);
+      }
+    } else if (category === 'phone') {
+      const phone = box(0.58, 1.1, 0.12, tone);
+      phone.position.y = 0.4;
+      group.add(phone);
+      const glass = box(0.45, 0.83, 0.02, '#e1ecd4');
+      glass.position.set(0, 0.43, 0.075);
+      group.add(glass);
+    } else if (category === 'storage') {
+      const tower = box(0.85, 1, 0.6, tone);
+      tower.position.y = 0.35;
+      group.add(tower);
+      for (const y of [0.15, 0.4, 0.65]) {
+        const slot = box(0.6, 0.035, 0.025, '#e8f0dc');
+        slot.position.set(0, y, 0.31);
+        group.add(slot);
+      }
+    } else {
+      const body = mesh(new THREE.SphereGeometry(0.43, 32, 24), tone);
+      body.position.y = 0.35;
+      group.add(body);
+      const orbit = mesh(new THREE.TorusGeometry(0.52, 0.025, 8, 50), '#dce9cb');
+      orbit.position.y = 0.35;
+      orbit.rotation.x = 1.1;
+      group.add(orbit);
+    }
+    group.rotation.y = 0.1;
+    return group;
+  }
+  const labelsRoot = document.createElement('div');
+  labelsRoot.className = 'scene-labels';
+  container.appendChild(labelsRoot);
   const labels: { element: HTMLElement; position: THREE.Vector3 }[] = [];
   const coreLabel = document.createElement('div');
   coreLabel.className = 'node-label core-label';
-  coreLabel.textContent = 'Réseau local';
-  labelRoot.appendChild(coreLabel);
-  labels.push({ element: coreLabel, position: new THREE.Vector3(0, -0.6, 0) });
+  coreLabel.textContent = 'Mon réseau';
+  labelsRoot.appendChild(coreLabel);
+  labels.push({ element: coreLabel, position: new THREE.Vector3(0, -0.75, 0) });
   const clickable: THREE.Object3D[] = [];
   const deviceByMesh = new Map<THREE.Object3D, Device>();
-  const shown = devices.slice(0, 100);
-  const sorted = [...shown].sort((a, b) => a.id.localeCompare(b.id));
-  for (let i = 0; i < sorted.length; i++) {
-    const device = sorted[i];
-    let hash = 0;
-    for (const c of device.id) hash = (hash * 31 + c.charCodeAt(0)) >>> 0;
-    // Stable position per device; two rings spread dense inventories.
-    const angle = ((hash % 3600) / 3600) * Math.PI * 2;
-    const radius = 3.6 + (hash % 4) * 1.25;
-    const position = new THREE.Vector3(
-      Math.cos(angle) * radius,
-      0.1 + (hash % 3) * 0.3,
-      Math.sin(angle) * radius,
+  const sorted = [...devices].sort((a, b) => a.id.localeCompare(b.id)).slice(0, 100);
+  const radius = 5.1 + Math.floor(Math.max(0, sorted.length - 1) / 8) * 2.5;
+  sorted.forEach((device, index) => {
+    const angle = 0.4 + index * 2.399963;
+    const distance = 5.1 + Math.floor(index / 8) * 2.5;
+    const position = new THREE.Vector3(Math.cos(angle) * distance, 0, Math.sin(angle) * distance);
+    const model = deviceModel(device);
+    model.position.copy(position);
+    model.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        clickable.push(object);
+        deviceByMesh.set(object, device);
+      }
+    });
+    scene.add(model);
+    shadow(position.x, position.z, 1.05);
+    const controlPoint = position.clone().multiplyScalar(0.5);
+    controlPoint.y = 0.25;
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(0, -0.35, 0),
+      controlPoint,
+      new THREE.Vector3(position.x, -0.35, position.z),
     );
-    const color =
-      device.status === 'unseen'
-        ? '#c4cac0'
-        : device.status === 'cached'
-          ? '#d3b88e'
-          : device.role === 'self'
-            ? '#8eab7a'
-            : '#c1d5c1';
-    const object = mesh(
-      device.role === 'self'
-        ? new THREE.BoxGeometry(0.7, 0.85, 0.14)
-        : new THREE.SphereGeometry(0.31, 28, 20),
-      color,
-    );
-    object.position.copy(position);
-    scene.add(object);
-    clickable.push(object);
-    deviceByMesh.set(object, device);
-    const foot = mesh(new THREE.CylinderGeometry(0.57, 0.62, 0.09, 40), '#e3e9dd');
-    foot.position.set(position.x, -0.45, position.z);
-    scene.add(foot);
-    const geometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0, -0.3, 0),
-      new THREE.Vector3(position.x, -0.3, position.z),
-    ]);
+    const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
     const material = new THREE.LineDashedMaterial({
-      color: '#9aad98',
-      dashSize: 0.1,
-      gapSize: 0.14,
+      color: device.status === 'cached' ? '#bcab8a' : '#9bb787',
+      dashSize: 0.12,
+      gapSize: 0.12,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.65,
     });
     resources.push(geometry, material);
     const link = new THREE.Line(geometry, material);
@@ -152,21 +220,25 @@ export function createScene(
     const button = document.createElement('button');
     button.className = `node-label ${device.status}`;
     button.type = 'button';
-    button.textContent = deviceName(device);
     button.title = `${deviceName(device)} · ${device.ip}`;
     button.setAttribute('aria-label', `Ouvrir ${deviceName(device)}`);
     button.onclick = () => onSelect(device);
+    const title = document.createElement('strong');
+    title.textContent = deviceName(device);
+    button.appendChild(title);
     const ip = document.createElement('span');
     ip.textContent = device.ip;
     button.appendChild(ip);
-    labelRoot.appendChild(button);
+    labelsRoot.appendChild(button);
     labels.push({
       element: button,
-      position: position.clone().add(new THREE.Vector3(0, -0.65, 0)),
+      position: position.clone().add(new THREE.Vector3(0, -0.85, 0.2)),
     });
-  }
+  });
   let frame = 0;
   let disposed = false;
+  let cameraTouched = false;
+  const initial = new THREE.Vector3();
   const projected = new THREE.Vector3();
   function render() {
     frame = 0;
@@ -176,20 +248,41 @@ export function createScene(
       height = container.clientHeight;
     for (const label of labels) {
       projected.copy(label.position).project(camera);
-      label.element.style.transform = `translate(-50%, 0) translate(${(projected.x * 0.5 + 0.5) * width}px, ${(-projected.y * 0.5 + 0.5) * height}px)`;
-      label.element.hidden = projected.z > 1 || projected.x < -1.1 || projected.x > 1.1;
+      const half = label.element.offsetWidth / 2 + 10;
+      const x = THREE.MathUtils.clamp((projected.x * 0.5 + 0.5) * width, half, width - half);
+      const y = THREE.MathUtils.clamp(
+        (-projected.y * 0.5 + 0.5) * height,
+        50,
+        height - (width < 400 ? 115 : 75),
+      );
+      label.element.style.transform = `translate(-50%, 0) translate(${x}px, ${y}px)`;
+      label.element.hidden =
+        projected.z > 1 || Math.abs(projected.x) > 1.4 || Math.abs(projected.y) > 1.4;
     }
   }
   const schedule = () => {
     if (!frame && !disposed) frame = requestAnimationFrame(render);
   };
   controls.addEventListener('change', schedule);
+  controls.addEventListener('start', () => {
+    cameraTouched = true;
+  });
   const resize = new ResizeObserver(() => {
     const width = container.clientWidth,
       height = container.clientHeight;
     if (!width || !height) return;
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
+    const distance = Math.max(18, radius * 3.5) * Math.max(1, 1.25 / camera.aspect);
+    initial
+      .copy(flat ? new THREE.Vector3(0, 1, 0.001) : new THREE.Vector3(0, 0.7, 1))
+      .normalize()
+      .multiplyScalar(distance);
+    if (!cameraTouched) {
+      camera.position.copy(initial);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }
     renderer.setSize(width, height);
     schedule();
   });
@@ -217,22 +310,20 @@ export function createScene(
   };
   renderer.domElement.addEventListener('pointerdown', pointerDown);
   renderer.domElement.addEventListener('pointerup', pointerUp);
-  schedule();
   return {
     reset() {
+      cameraTouched = false;
       camera.position.copy(initial);
       controls.target.set(0, 0, 0);
       controls.update();
       schedule();
     },
     zoom(direction) {
+      cameraTouched = true;
       camera.position.multiplyScalar(direction > 0 ? 0.85 : 1.15);
-      const length = THREE.MathUtils.clamp(
-        camera.position.length(),
-        controls.minDistance,
-        controls.maxDistance,
+      camera.position.setLength(
+        THREE.MathUtils.clamp(camera.position.length(), controls.minDistance, controls.maxDistance),
       );
-      camera.position.setLength(length);
       controls.update();
       schedule();
     },
@@ -247,7 +338,7 @@ export function createScene(
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
-      labelRoot.remove();
+      labelsRoot.remove();
     },
   };
 }

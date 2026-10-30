@@ -60,7 +60,10 @@ try {
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
   assert.deepEqual(
-    drawerAudit.violations.map((violation) => violation.id),
+    drawerAudit.violations.map((violation) => ({
+      id: violation.id,
+      nodes: violation.nodes.map((n) => ({ html: n.html, summary: n.failureSummary })),
+    })),
     [],
     'Device drawer accessibility',
   );
@@ -75,8 +78,26 @@ try {
   await page.getByLabel('Rechercher un appareil').fill('NAS du bureau');
   await expect(page.locator('tbody tr')).toHaveCount(1);
   await page.getByLabel('Rechercher un appareil').fill('');
+  await page.getByLabel('Trier les appareils').selectOption('ip');
+  await expect(page.locator('tbody tr').first()).toContainText('192.168.50.1');
+  await page.getByRole('button', { name: 'Vue cartes', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Fiche de NAS du bureau', exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Vue liste', exact: true }).click();
+  await page.getByRole('button', { name: /^Non revus/ }).click();
+  await expect(page.getByText('Aucun appareil ne correspond')).toBeVisible();
+  await page.getByRole('button', { name: 'Réinitialiser les filtres' }).click();
+  await expect(page.locator('tbody tr')).toHaveCount(4);
   await page.getByRole('button', { name: 'Découvrir le réseau', exact: true }).click();
   await expect(page.locator('tbody tr')).toHaveCount(5, { timeout: 15000 });
+  if (process.env.E2E_SCREENSHOT_DIR) {
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: join(process.env.E2E_SCREENSHOT_DIR, 'fixture-overview.png'),
+      fullPage: true,
+    });
+  }
   console.log('Discovery, editing and persistence passed');
   await page.getByRole('button', { name: 'Chronologie', exact: true }).click();
   await expect(page.locator('.scan-timeline li')).toHaveCount(2);
@@ -86,6 +107,9 @@ try {
   await expect(page.locator('.diff-stats')).toContainText('1 nouveaux');
   await expect(page.locator('.diff-stats')).toContainText('1 non revus');
   await expect(page.locator('.diff-stats')).toContainText('1 modifiés');
+  await page.locator('.scan-timeline button').nth(1).click();
+  await expect(comparison).toHaveValue('');
+  await expect(page.locator('.diff-stats')).toHaveCount(0);
   await page.getByRole('button', { name: 'Réglages', exact: true }).click();
   await page.getByLabel('Interface de collecte automatique').selectOption(networkId());
   await page.getByLabel('Fréquence de découverte').selectOption('15');
@@ -131,7 +155,42 @@ try {
   }
   await page.getByRole('button', { name: 'Ouvrir la navigation' }).click();
   await page.getByRole('button', { name: 'Appareils', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Chaque appareil a sa place.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tous vos appareils.' })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Fiche de NAS du bureau', exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Fiche de NAS du bureau', exact: true }).click();
+  await page.getByLabel('Nom personnalisé').fill('Modification temporaire');
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('Conserver vos modifications ?')).toBeVisible();
+  await page.getByRole('button', { name: 'Abandonner les modifications' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  for (const name of ['Observatoire', 'Appareils', 'Chronologie', 'Réglages']) {
+    await page.getByRole('button', { name: 'Ouvrir la navigation' }).click();
+    await page.getByRole('button', { name, exact: true }).click();
+    assert.equal(
+      await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+      false,
+      `${name} overflows on mobile`,
+    );
+    const result = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    for (const violation of result.violations)
+      violations.push({
+        page: `${name} mobile`,
+        id: violation.id,
+        nodes: violation.nodes.map((n) => n.html),
+      });
+  }
+  await page.getByRole('button', { name: 'Ouvrir la navigation' }).click();
+  await expect(page.getByRole('dialog', { name: 'Navigation', exact: true })).toBeVisible();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.getByRole('button', { name: 'Prendre ses repères' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Fermer la navigation' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Ouvrir la navigation' })).toBeFocused();
   assert.deepEqual(errors, [], 'Uncaught browser errors');
   assert.deepEqual(consoleErrors, [], 'Browser console errors');
   console.log(
@@ -143,13 +202,15 @@ try {
           '3D/2D',
           'device annotations',
           'persistence',
-          'search',
+          'search, filters and sorting',
+          'list and card views',
           'history comparison',
           'settings persistence',
           'CSV export',
-          '4-page accessibility',
+          '4-page desktop and mobile accessibility',
           '5 viewport widths',
-          'mobile navigation',
+          'mobile keyboard navigation',
+          'unsaved device changes',
         ],
         violations,
       },

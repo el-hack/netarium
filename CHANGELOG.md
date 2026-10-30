@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Refonte de l’ensemble des écrans : palette ivoire et sauge, hiérarchie, espacements et contrastes.
+- Carte 3D avec modèles d’appareils, anneaux discrets et cadrage adaptatif.
+- Inventaire en liste ou cartes, recherche insensible aux accents et tri par nom, IP ou date.
+- Navigation mobile accessible au clavier, inventaire en cartes et formulaires adaptés.
+- Protection des modifications non enregistrées dans les fiches et état de sauvegarde des réglages.
+- Historique limité au réseau sélectionné et comparaison avec un instantané distinct.
+
 ## 0.1.0 — 2026-10-30
 
 ### Added

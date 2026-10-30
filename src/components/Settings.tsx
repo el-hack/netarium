@@ -15,6 +15,11 @@ export function Settings({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const dirty = JSON.stringify(form) !== JSON.stringify(data.settings);
+  function update(change: Partial<SettingsType>) {
+    setForm((current) => ({ ...current, ...change }));
+    setMessage('');
+  }
   async function save(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -56,8 +61,9 @@ export function Settings({
         <label className="field">
           Interface de collecte automatique
           <select
+            disabled={busy}
             value={form.interfaceId ?? ''}
-            onChange={(event) => setForm({ ...form, interfaceId: event.target.value || null })}
+            onChange={(event) => update({ interfaceId: event.target.value || null })}
           >
             <option value="">Sélectionner une interface</option>
             {data.interfaces.map((network) => (
@@ -70,8 +76,9 @@ export function Settings({
         <label className="field">
           Fréquence de découverte
           <select
+            disabled={busy}
             value={form.intervalMinutes}
-            onChange={(event) => setForm({ ...form, intervalMinutes: Number(event.target.value) })}
+            onChange={(event) => update({ intervalMinutes: Number(event.target.value) })}
           >
             <option value={0}>Manuelle uniquement</option>
             <option value={5}>Toutes les 5 minutes</option>
@@ -83,8 +90,9 @@ export function Settings({
         <label className="field">
           Conservation de l’historique
           <select
+            disabled={busy}
             value={form.retentionDays}
-            onChange={(event) => setForm({ ...form, retentionDays: Number(event.target.value) })}
+            onChange={(event) => update({ retentionDays: Number(event.target.value) })}
           >
             {[7, 30, 90, 365].map((days) => (
               <option key={days} value={days}>
@@ -109,10 +117,13 @@ export function Settings({
             {message}
           </p>
         )}
-        <button className="button primary" disabled={busy} type="submit">
-          <Save size={16} />
-          {busy ? 'Enregistrement…' : 'Enregistrer les préférences'}
-        </button>
+        <div className="settings-savebar">
+          <span>{dirty ? 'Modifications non enregistrées' : 'Préférences à jour'}</span>
+          <button className="button primary" disabled={busy || !dirty} type="submit">
+            <Save size={16} />
+            {busy ? 'Enregistrement…' : 'Enregistrer les préférences'}
+          </button>
+        </div>
       </form>
       <div className="settings-right">
         <section className="panel capabilities">

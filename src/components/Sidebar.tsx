@@ -1,4 +1,5 @@
-import { Network, ShieldCheck, CircleHelp, ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Network, ShieldCheck, CircleHelp, ArrowUpRight, X } from 'lucide-react';
 import { navigation, type Page } from '../navigation';
 import { Brand } from './Icons';
 export function Sidebar({
@@ -8,6 +9,7 @@ export function Sidebar({
   help,
   onNavigate,
   onHelp,
+  onClose,
 }: {
   page: Page;
   menuOpen: boolean;
@@ -15,9 +17,68 @@ export function Sidebar({
   help: boolean;
   onNavigate: (page: Page) => void;
   onHelp: () => void;
+  onClose: () => void;
 }) {
+  const sidebar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const element = sidebar.current!;
+    const focusable = () =>
+      [...element.querySelectorAll<HTMLElement>('button, a[href]')].filter(
+        (item) => item.offsetParent !== null,
+      );
+    focusable()[0]?.focus();
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    function keyboard(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusable();
+      const first = items[0];
+      const last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    }
+    const media = matchMedia('(min-width: 701px)');
+    const resized = () => {
+      if (media.matches) onClose();
+    };
+    document.addEventListener('keydown', keyboard);
+    media.addEventListener('change', resized);
+    return () => {
+      document.removeEventListener('keydown', keyboard);
+      media.removeEventListener('change', resized);
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
+  }, [menuOpen, onClose]);
   return (
-    <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
+    <aside
+      ref={sidebar}
+      id="primary-sidebar"
+      className={`sidebar ${menuOpen ? 'open' : ''}`}
+      role={menuOpen ? 'dialog' : undefined}
+      aria-modal={menuOpen || undefined}
+      aria-label={menuOpen ? 'Navigation' : undefined}
+    >
+      {menuOpen && (
+        <button
+          className="icon-button sidebar-close"
+          onClick={onClose}
+          aria-label="Fermer la navigation"
+        >
+          <X size={19} />
+        </button>
+      )}
       <a
         className="brand-link"
         href="#"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Maximize2, Minus, Plus, Box, Layers, Orbit, Move, Info } from 'lucide-react';
+import { Maximize2, Minus, Plus, Box, Layers, Orbit, Move, Info, Network } from 'lucide-react';
 import type { Device, NetworkInterface } from '../../shared/types';
 import type { SceneHandle } from './scene';
 export function NetworkMap({
@@ -52,18 +52,16 @@ export function NetworkMap({
     >
       <div className="map-top">
         <div>
-          <span className="eyebrow">VOTRE CONSTELLATION</span>
-          <h2>
-            Une autre vue du réseau <span className="soft-tag">{flat ? '2D' : '3D'}</span>
-          </h2>
+          <span className="eyebrow">EXPLORER LES CONNEXIONS</span>
+          <h2>Votre constellation</h2>
         </div>
-        <div className="segmented">
+        <div className="segmented" aria-label="Perspective de la carte">
           <button
             className={!flat ? 'selected' : ''}
             onClick={() => setFlat(false)}
             aria-pressed={!flat}
           >
-            <Box size={14} />
+            <Box size={15} />
             3D
           </button>
           <button
@@ -71,75 +69,96 @@ export function NetworkMap({
             onClick={() => setFlat(true)}
             aria-pressed={flat}
           >
-            <Layers size={14} />
+            <Layers size={15} />
             2D
           </button>
         </div>
       </div>
-      <div className="map-surface" ref={container} />
-      {!devices.length && !error && (
-        <div className="map-welcome">
-          <span className="welcome-icon">
-            <Orbit size={24} />
+      <div className="map-stage">
+        <div className="map-surface" ref={container} />
+        <span className="map-scope">
+          <Network size={13} />
+          {network?.scanCidr ?? 'Réseau local'}
+        </span>
+        <div className="map-legend">
+          <span>
+            <i />
+            Observé
           </span>
-          <h3>Tout commence par une découverte.</h3>
-          <p>
-            Votre réseau prendra forme ici,
-            <br />
-            un appareil à la fois.
-          </p>
+          <span>
+            <i className="cached" />
+            Cache
+          </span>
+          <span>
+            <i className="unseen" />
+            Non revu
+          </span>
         </div>
-      )}
-      {error && (
-        <div className="map-welcome">
-          <Info size={26} />
-          <h3>La vue graphique n’est pas disponible.</h3>
-          <p>
-            Votre navigateur doit prendre en charge WebGL 2.
-            <br />
-            L’inventaire reste entièrement accessible.
-          </p>
+        {!devices.length && !error && (
+          <div className="map-welcome">
+            <span className="welcome-icon">
+              <Orbit size={27} />
+            </span>
+            <h3>Votre réseau n’attend que vous.</h3>
+            <p>
+              Lancez une découverte.
+              <br />
+              Vos appareils prendront place ici.
+            </p>
+          </div>
+        )}
+        {error && (
+          <div className="map-welcome">
+            <Info size={27} />
+            <h3>La vue graphique est indisponible.</h3>
+            <p>
+              WebGL 2 est nécessaire pour afficher la carte.
+              <br />
+              Vous pouvez consulter tous vos appareils dans l’inventaire.
+            </p>
+          </div>
+        )}
+        <div className="map-controls">
+          <button
+            className="icon-button"
+            disabled={error}
+            aria-label="Zoom avant"
+            onClick={() => scene.current?.zoom(1)}
+          >
+            <Plus size={18} />
+          </button>
+          <button
+            className="icon-button"
+            disabled={error}
+            aria-label="Zoom arrière"
+            onClick={() => scene.current?.zoom(-1)}
+          >
+            <Minus size={18} />
+          </button>
+          <span />
+          <button
+            className="icon-button"
+            disabled={error}
+            aria-label="Recentrer la carte"
+            onClick={() => scene.current?.reset()}
+          >
+            <Maximize2 size={17} />
+          </button>
         </div>
-      )}
-      <div className="map-controls">
-        <button
-          className="icon-button"
-          aria-label="Zoom avant"
-          onClick={() => scene.current?.zoom(1)}
-        >
-          <Plus size={17} />
-        </button>
-        <button
-          className="icon-button"
-          aria-label="Zoom arrière"
-          onClick={() => scene.current?.zoom(-1)}
-        >
-          <Minus size={17} />
-        </button>
-        <span />
-        <button
-          className="icon-button"
-          aria-label="Recentrer la carte"
-          onClick={() => scene.current?.reset()}
-        >
-          <Maximize2 size={16} />
-        </button>
+        <span className="map-gesture">
+          <Move size={14} />
+          Glissez pour explorer · Cliquez sur un appareil
+        </span>
       </div>
       <div className="map-bottom">
+        <span className="map-disclaimer">
+          <Info size={14} />
+          Vue logique du réseau. Les liens ne représentent pas le câblage physique.
+        </span>
         <span>
-          <i className="tiny-dot" />
-          {network?.scanCidr ?? 'Réseau local'}
-          <span className="map-divider">/</span>
           {devices.length} appareil{devices.length > 1 ? 's' : ''}
+          {devices.length > 100 ? ' · 100 affichés' : ''}
         </span>
-        <span>
-          <Move size={13} />
-          Glisser pour explorer
-        </span>
-      </div>
-      <div className="map-disclaimer">
-        <Info size={12} /> Les liens représentent l’appartenance au périmètre, pas le câblage
-        physique.{devices.length > 100 ? ' Les 100 premiers appareils sont affichés.' : ''}
       </div>
     </section>
   );

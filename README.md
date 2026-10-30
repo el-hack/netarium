@@ -29,7 +29,7 @@ L’application ne demande jamais de lancer tout le serveur en administrateur. L
 ## Fonctionnalités
 
 - Carte 3D avec rotation, zoom, recentrage et vue de dessus 2D ; chargement du moteur graphique à la demande.
-- Inventaire consultable au clavier, recherche et filtre d’état.
+- Inventaire consultable au clavier, recherche insensible aux accents, filtres d’état, tri et vues liste/cartes.
 - Fiches avec nom, catégorie et notes personnalisées ; provenance de chaque observation.
 - Identité par adresse MAC quand elle est disponible, repli provisoire sur l’IP dans le périmètre.
 - Instantané immuable après chaque collecte réussie ; comparaison des nouveaux appareils, absences et changements.

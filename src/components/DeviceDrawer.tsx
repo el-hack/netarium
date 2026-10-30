@@ -20,6 +20,13 @@ export function DeviceDrawer({
   const [notes, setNotes] = useState(device.notes);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const dirty = label !== device.label || category !== device.category || notes !== device.notes;
+  function requestClose() {
+    if (busy) return;
+    if (dirty) setConfirmDiscard(true);
+    else onClose();
+  }
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
@@ -47,15 +54,23 @@ export function DeviceDrawer({
       ref={dialog}
       className="drawer"
       aria-labelledby="device-dialog-title"
-      onCancel={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        requestClose();
+      }}
       onClick={(event) => {
-        if (event.target === dialog.current) onClose();
+        if (event.target === dialog.current) requestClose();
       }}
     >
       <div className="drawer-content">
         <div className="drawer-top">
           <span className="eyebrow">FICHE APPAREIL</span>
-          <button className="icon-button" onClick={onClose} aria-label="Fermer les détails">
+          <button
+            className="icon-button"
+            onClick={requestClose}
+            disabled={busy}
+            aria-label="Fermer les détails"
+          >
             <X size={20} />
           </button>
         </div>
@@ -110,6 +125,24 @@ export function DeviceDrawer({
             <dd className="mono">{device.network}</dd>
           </div>
         </dl>
+        {confirmDiscard && (
+          <div className="discard-notice" role="alert">
+            <strong>Conserver vos modifications ?</strong>
+            <p>Cette fiche contient des changements non enregistrés.</p>
+            <div>
+              <button
+                className="button secondary"
+                onClick={() => setConfirmDiscard(false)}
+                autoFocus
+              >
+                Continuer l’édition
+              </button>
+              <button className="text-button" onClick={onClose}>
+                Abandonner les modifications
+              </button>
+            </div>
+          </div>
+        )}
         <form onSubmit={save}>
           <div className="form-section-title">
             <h3>Votre organisation</h3>
@@ -120,7 +153,7 @@ export function DeviceDrawer({
             <input
               value={label}
               maxLength={80}
-              disabled={readOnly}
+              disabled={readOnly || busy}
               placeholder="Ex. MacBook du bureau"
               onChange={(event) => setLabel(event.target.value)}
             />
@@ -130,7 +163,7 @@ export function DeviceDrawer({
             <select
               aria-label="Catégorie"
               value={category}
-              disabled={readOnly}
+              disabled={readOnly || busy}
               onChange={(event) => setCategory(event.target.value as Category)}
             >
               {categories.map((value) => (
@@ -144,7 +177,7 @@ export function DeviceDrawer({
             Notes
             <textarea
               value={notes}
-              disabled={readOnly}
+              disabled={readOnly || busy}
               maxLength={2000}
               placeholder="Pièce, usage, informations utiles…"
               rows={3}
@@ -165,10 +198,13 @@ export function DeviceDrawer({
                   {error}
                 </p>
               )}
-              <button className="button primary full" disabled={busy} type="submit">
-                <Check size={16} />
-                {busy ? 'Enregistrement…' : 'Enregistrer les modifications'}
-              </button>
+              <div className="drawer-savebar">
+                <span>{dirty ? 'Modifications non enregistrées' : 'Votre fiche est à jour'}</span>
+                <button className="button primary full" disabled={busy || !dirty} type="submit">
+                  <Check size={16} />
+                  {busy ? 'Enregistrement…' : 'Enregistrer les modifications'}
+                </button>
+              </div>
             </>
           )}
         </form>
