@@ -235,9 +235,6 @@ export default function App() {
     >
       <div className="page-heading">
         <div>
-          <span className="eyebrow">
-            NETARIUM / {demo ? 'SIMULATED WORKSPACE' : 'LOCAL OBSERVATORY'}
-          </span>
           <h1>{meta.label}</h1>
           <p>{meta.description}</p>
         </div>

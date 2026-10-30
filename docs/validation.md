@@ -2,7 +2,16 @@
 
 Vérifié le 30 octobre 2026 sur macOS, Node.js 24 et Google Chrome avec profil isolé.
 
-## Résultats
+## Refonte Trovy — validation supplémentaire du 30 octobre 2026
+
+- Build de production, TypeScript strict, ESLint et 58 tests Node validés après refonte.
+- Nouveau passage complet des parcours navigateur : 28 audits axe, neuf vues dans les deux thèmes et sur mobile, cinq largeurs 320/375/768/1024/1440 px. Aucun problème détecté, aucune exception JavaScript ni erreur console.
+- Le test sélectionne et vérifie explicitement chaque thème : le nouveau défaut clair ne peut pas masquer l’absence d’un passage sombre.
+- Inspection visuelle des captures Overview clair/sombre, Activity Explorer, inventaire, carte 3D et écran mobile. Cartes, listes, filtres et formulaires utilisent le nouveau système.
+- Onglet réel rechargé : préférence sombre conservée, inventaire et anciennes mesures toujours présents. Aucun redémarrage du serveur ni changement de configuration des collecteurs nécessaire.
+- Captures et archive actualisées, uniquement avec données de démonstration pour les images distribuées.
+
+## Résultats fonctionnels de la version 0.2.0
 
 - TypeScript strict, ESLint, Prettier et build de production validés.
 - 58 tests Node réussis : protections d’API, découverte, identité et classification, persistance, tags/migration, parsing mDNS/lsof/compteurs, limites des commandes, journal idempotent, filtres, provenance, valeurs inconnues, consentement, désactivation, agrégats séparés, positions, redémarrage, rétention et suppression du journal.

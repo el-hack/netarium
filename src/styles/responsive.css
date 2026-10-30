@@ -2,23 +2,17 @@
   .workspace main {
     padding-inline: 48px;
   }
-  .workspace-sidebar {
-    width: 250px;
-  }
-  .workspace-content {
-    margin-left: 250px;
-  }
   .map-stage {
     height: 620px;
   }
 }
 @media (max-width: 1200px) {
-  .workspace-sidebar {
-    width: 205px;
-    padding-inline: 10px;
+  :root {
+    --sidebar-width: 220px;
   }
-  .workspace-content {
-    margin-left: 205px;
+  .workspace-sidebar nav button {
+    padding-inline: 12px;
+    font-size: 12px;
   }
   .workspace main {
     padding: 26px 24px 40px;
@@ -30,7 +24,7 @@
     grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr);
   }
   .stat {
-    padding-inline: 16px;
+    padding: 16px;
   }
   .stat > strong {
     font-size: 25px;
@@ -53,7 +47,7 @@
   }
   .source-details dt {
     margin: 6px 0 2px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .threshold-form {
     margin-left: 0;
@@ -154,17 +148,42 @@
   }
 }
 @media (max-width: 760px) {
+  input,
+  select,
+  textarea,
+  .search-field input,
+  .filter-bar select,
+  .context-bar select {
+    font-size: 16px;
+  }
+  .drawer {
+    border-radius: 0;
+    inset: 0 0 0 auto;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
   .workspace-sidebar {
     transform: translateX(-100%);
-    width: 245px;
+    width: 272px;
+    border-right: 1px solid var(--border);
     transition: transform var(--speed);
     padding: 24px 16px 18px;
   }
   .workspace-sidebar.is-open {
     transform: translateX(0);
   }
+  .workspace {
+    padding: 0;
+  }
   .workspace-content {
     margin-left: 0;
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+  .workspace-topbar {
+    border-radius: 0;
   }
   .mobile-only {
     display: inline-flex;
@@ -191,10 +210,11 @@
     gap: 6px;
   }
   .breadcrumb {
-    font-size: 10px;
+    font-size: 12px;
     gap: 8px;
   }
-  .breadcrumb > span:first-child {
+  .breadcrumb > svg,
+  .breadcrumb > span {
     display: none;
   }
   .command-trigger {
@@ -222,46 +242,40 @@
     margin-left: auto;
   }
   .heading-actions .button {
-    font-size: 10px;
+    font-size: 12px;
   }
   .page-heading p {
-    font-size: 11px;
+    font-size: 14px;
   }
   .context-bar {
     gap: 6px;
   }
   .context-bar select {
-    font-size: 10px;
-    max-width: 200px;
+    max-width: 100%;
   }
   .last-sync {
-    font-size: 9px;
+    font-size: 11px;
   }
   .metric-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 0;
+    gap: 12px;
   }
   .stat {
-    padding-inline: 16px;
+    padding: 16px;
   }
-  .stat:nth-child(2) {
-    border-right: 0;
-  }
-  .stat:nth-child(3) {
-    padding-left: 0;
-  }
+
   .stat > strong {
     font-size: 27px;
   }
   .stat > small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .visibility-band {
     flex-wrap: wrap;
     gap: 8px;
   }
   .visibility-band > span {
-    font-size: 10px;
+    font-size: 12px;
   }
   .visibility-band > span > span {
     width: 100%;
@@ -269,20 +283,21 @@
   }
   .workspace-footer {
     padding: 18px;
-    font-size: 8px;
+    font-size: 11px;
     gap: 16px;
   }
   .demo-banner {
     padding: 10px 18px;
     flex-wrap: wrap;
     gap: 6px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .demo-banner > span {
     width: 100%;
   }
   .demo-banner > button {
     margin: 0;
+    min-height: 28px;
     padding: 0;
   }
   .device-masthead {
@@ -294,7 +309,7 @@
     max-width: none;
   }
   .device-masthead .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
     letter-spacing: 0.8px;
   }
   .device-masthead h2 {
@@ -304,7 +319,7 @@
     gap: 20px;
   }
   .activity-tabs button {
-    font-size: 11px;
+    font-size: 13px;
   }
   .activity-context {
     gap: 8px 18px;
@@ -349,7 +364,7 @@
     font-size: 14px;
   }
   .visibility-banner p {
-    font-size: 11px;
+    font-size: 13px;
   }
   .extension-grid {
     grid-template-columns: 1fr;
@@ -387,13 +402,13 @@
     text-align: right;
   }
   .event-time time {
-    font-size: 8px;
+    font-size: 11px;
   }
   .event-timeline strong {
-    font-size: 10px;
+    font-size: 12px;
   }
   .event-timeline p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .event-symbol {
     width: 23px;
@@ -408,17 +423,17 @@
   }
   .filter-tabs button {
     padding: 5px 7px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .table-scroll table {
-    font-size: 10px;
+    font-size: 12px;
   }
   .table-scroll th,
   .table-scroll td {
     padding: 12px;
   }
   .inventory-footer {
-    font-size: 9px;
+    font-size: 11px;
     flex-wrap: wrap;
   }
   .device-picker {
@@ -437,7 +452,7 @@
     flex-wrap: wrap;
   }
   .map-gesture {
-    font-size: 8px;
+    font-size: 11px;
   }
   .map-top {
     padding: 16px;
@@ -491,10 +506,10 @@
     min-height: 110px;
   }
   .chart-scrubber {
-    font-size: 8px;
+    font-size: 11px;
   }
   .chart-readout b {
-    font-size: 12px;
+    font-size: 14px;
   }
   .command-dialog {
     margin-top: 8vh;
@@ -509,7 +524,7 @@
     gap: 7px 12px;
   }
   .alert-row p {
-    font-size: 11px;
+    font-size: 13px;
   }
   .modal {
     padding: 20px;
@@ -533,7 +548,7 @@
     flex: 1;
   }
   .breadcrumb {
-    font-size: 9px;
+    font-size: 11px;
   }
   .context-divider {
     display: none;
@@ -545,16 +560,16 @@
     max-width: 100%;
   }
   .stat {
-    padding-inline: 12px;
+    padding: 12px;
   }
   .stat > strong {
     font-size: 23px;
   }
   .stat > span {
-    font-size: 10px;
+    font-size: 12px;
   }
   .visibility-band .text-button {
-    font-size: 10px;
+    font-size: 12px;
   }
   .section-heading {
     padding: 16px;
@@ -569,10 +584,10 @@
     display: block;
   }
   .map-top h2 {
-    font-size: 11px;
+    font-size: 13px;
   }
   .map-top .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
     letter-spacing: 0.8px;
   }
   .device-masthead .eyebrow {
@@ -588,7 +603,7 @@
     gap: 7px;
   }
   .source-details dl {
-    font-size: 10px;
+    font-size: 12px;
   }
   .threshold-form label {
     align-items: flex-start;

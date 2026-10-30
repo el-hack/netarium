@@ -209,8 +209,13 @@ try {
     'Settings',
   ];
   for (const theme of ['dark', 'light']) {
-    if (theme === 'light')
-      await page.getByRole('button', { name: 'Activer le mode clair' }).click();
+    if ((await page.locator('html').getAttribute('data-theme')) !== theme)
+      await page
+        .getByRole('button', {
+          name: theme === 'light' ? 'Activer le mode clair' : 'Activer le mode sombre',
+        })
+        .click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
     for (const name of names) {
       await nav(name);
       if (name === 'Activity Explorer' && (await page.locator('.device-picker').isVisible())) {
@@ -229,9 +234,20 @@ try {
     }
   }
   assert.deepEqual(demoRequests, [], 'Demo must issue no API requests');
-  await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
   await nav('Overview');
   await page.screenshot({ path: '../netarium-apercu.png', fullPage: true, animations: 'disabled' });
+  await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
+  await page.screenshot({ path: '../netarium-sombre.png', fullPage: true, animations: 'disabled' });
+  await page.getByRole('button', { name: 'Activer le mode clair' }).click();
+  await nav('Devices');
+  await page.screenshot({
+    path: '../netarium-inventaire.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await nav('Network Explorer');
+  await expect(page.locator('.scene-labels[data-ready="true"]')).toBeVisible();
+  await page.screenshot({ path: '../netarium-carte.png', fullPage: true, animations: 'disabled' });
   await nav('Activity Explorer');
   await page.getByRole('button', { name: 'Vue générale', exact: true }).click();
   await page.screenshot({

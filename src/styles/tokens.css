@@ -1,27 +1,33 @@
+/* Trovy-derived semantic palette. Netarium keeps its own components and system fonts. */
 :root {
-  color-scheme: dark;
-  --bg: #0c1117;
-  --sidebar: #10161e;
-  --surface: #131b24;
-  --surface-raised: #19232e;
-  --surface-hover: #202d3a;
-  --input: #0e151d;
-  --map-bg: #101a20;
-  --text: #e9eff5;
-  --muted: #a1b0c1;
-  --subtle: #93a5b9;
-  --border: #2c3948;
-  --line: #25313e;
-  --accent: #72dfc7;
-  --accent-bg: #173e38;
-  --accent-text: #082e26;
-  --focus: #99eada;
-  --warning: #f2c278;
-  --warning-bg: #3b3020;
-  --danger: #ff9fa3;
-  --danger-bg: #43272c;
-  --chart-secondary: #a8b2ff;
-  --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color-scheme: light;
+  --bg: #fafafa;
+  --sidebar: #fafafa;
+  --surface: #ffffff;
+  --surface-raised: #f5f5f5;
+  --surface-hover: #ededed;
+  --input: #ffffff;
+  --input-border: #ced0d5;
+  --map-bg: #f5f5f5;
+  --text: #181c25;
+  --muted: #676b74;
+  --subtle: #676b74;
+  --border: #e3e4e8;
+  --line: #ececef;
+  --primary: #0063e6;
+  --accent: #0063d9;
+  --accent-bg: #edf4ff;
+  --accent-text: #ffffff;
+  --focus: #0063e6;
+  --success: #227950;
+  --success-bg: #edf7f1;
+  --warning: #906009;
+  --warning-bg: #fff7e6;
+  --danger: #c62020;
+  --danger-bg: #fff0f0;
+  --chart-primary: #0063d9;
+  --chart-secondary: #697481;
+  --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
   --space-1: 4px;
   --space-2: 8px;
@@ -32,43 +38,52 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
-  --radius-sm: 6px;
-  --radius: 10px;
+  --radius-sm: 8px;
+  --radius: 12px;
   --radius-lg: 16px;
-  --shadow: 0 16px 60px #0005;
-  --speed: 140ms;
+  --sidebar-width: 248px;
+  --shadow: 0 16px 60px #0000001f;
+  --speed: 150ms;
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
+  font-feature-settings: 'cv11', 'ss01', 'cv02';
+  font-variant-numeric: tabular-nums;
   background: var(--bg);
   color: var(--text);
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-:root[data-theme='light'] {
-  color-scheme: light;
-  --bg: #f3f5f7;
-  --sidebar: #fafbfd;
-  --surface: #fff;
-  --surface-raised: #f0f4f7;
-  --surface-hover: #e7edf2;
-  --input: #fff;
-  --map-bg: #eaf1f2;
-  --text: #182631;
-  --muted: #526577;
-  --subtle: #5b6c7c;
-  --border: #cad4de;
-  --line: #dce3ea;
-  --accent: #136e5c;
-  --accent-bg: #dbf2ea;
-  --accent-text: #fff;
-  --focus: #087b68;
-  --warning: #875800;
-  --warning-bg: #fbedd2;
-  --danger: #b42c3b;
-  --danger-bg: #fbe5e8;
-  --chart-secondary: #6261be;
-  --shadow: 0 16px 60px #253b4e20;
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121212;
+  --sidebar: #121212;
+  --surface: #1a1a1a;
+  --surface-raised: #212121;
+  --surface-hover: #292929;
+  --input: #1a1a1a;
+  --input-border: #6e6e6e;
+  --map-bg: #171717;
+  --text: #f0f0f0;
+  --muted: #adadad;
+  --subtle: #adadad;
+  --border: #303030;
+  --line: #303030;
+  --primary: #0063e6;
+  --accent: #85baff;
+  --accent-bg: #1e2e44;
+  --accent-text: #ffffff;
+  --focus: #85baff;
+  --success: #66d69f;
+  --success-bg: #19382a;
+  --warning: #fbc560;
+  --warning-bg: #3a3020;
+  --danger: #f57b7b;
+  --danger-bg: #3c2525;
+  --chart-primary: #85baff;
+  --chart-secondary: #b2b9c4;
+  --shadow: 0 16px 60px #0006;
 }
 * {
   box-sizing: border-box;
@@ -131,10 +146,10 @@ p {
   margin: 0;
 }
 h1 {
-  font-size: 30px;
-  letter-spacing: -1.1px;
+  font-size: 28px;
+  letter-spacing: -0.84px;
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 600;
 }
 h2 {
   font-size: 16px;
@@ -177,8 +192,8 @@ hr {
   color: var(--muted);
 }
 .eyebrow {
-  font-size: 10px;
-  font-weight: 650;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 1.4px;
   color: var(--subtle);
   display: block;
@@ -198,7 +213,7 @@ hr {
   left: 16px;
   z-index: 100;
   padding: 12px;
-  background: var(--accent);
+  background: var(--primary);
   color: var(--accent-text);
 }
 .skip-link:focus {
@@ -210,11 +225,11 @@ hr {
   justify-content: center;
   gap: 8px;
   min-height: 36px;
-  padding: 8px 13px;
+  padding: 8px 16px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   white-space: normal;
   text-align: center;
 }
@@ -222,11 +237,11 @@ hr {
   text-decoration: none;
 }
 .primary {
-  background: var(--accent);
+  background: var(--primary);
   color: var(--accent-text);
 }
 .primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(0.92);
 }
 .secondary {
   background: var(--surface);
@@ -279,7 +294,7 @@ hr {
   align-items: center;
   padding: 3px 7px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 550;
   white-space: nowrap;
 }
@@ -309,8 +324,8 @@ hr {
   flex: 1;
 }
 .success-message {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--success-bg);
+  color: var(--success);
 }
 .hint,
 .table-note {
@@ -381,4 +396,8 @@ hr {
 }
 .mobile-only {
   display: none;
+}
+
+.lucide {
+  stroke-width: 1.5;
 }

@@ -20,7 +20,7 @@
   font-weight: 500;
 }
 .map-top .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
 }
 .map-stage {
   height: 530px;
@@ -50,10 +50,10 @@
   pointer-events: auto;
   white-space: nowrap;
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   padding: 6px 10px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text);
   box-shadow: 0 2px 8px #0001;
 }
@@ -62,7 +62,7 @@
 }
 .node-label strong {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 550;
 }
 .node-label span {
@@ -93,7 +93,7 @@
   bottom: 15px;
   left: 18px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   background: var(--map-bg);
   padding: 2px 4px;
   max-width: 90%;
@@ -105,7 +105,7 @@
   gap: 12px;
   padding: 12px 18px;
   border-top: 1px solid var(--line);
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .map-bottom > span {
@@ -130,7 +130,7 @@
   z-index: 5;
 }
 .map-welcome p {
-  font-size: 12px;
+  font-size: 14px;
 }
 .explorer-inspector {
   background: var(--surface);
@@ -144,29 +144,29 @@
   gap: 12px;
 }
 .explorer-inspector > .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
 }
 .explorer-inspector h2 {
   font-size: 18px;
   overflow-wrap: anywhere;
 }
 .explorer-inspector p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .explorer-inspector .properties {
   margin: 0 0 5px;
   width: 100%;
 }
 .explorer-inspector .properties > div {
-  font-size: 10px;
+  font-size: 12px;
   gap: 8px;
 }
 .explorer-inspector .properties dd {
-  font-size: 10px;
+  font-size: 12px;
 }
 .explorer-inspector > .button {
   width: 100%;
-  font-size: 11px;
+  font-size: 13px;
 }
 .map-device-list {
   border-top: 1px solid var(--line);
@@ -183,16 +183,16 @@
   width: 100%;
   text-align: left;
   padding: 9px 5px;
-  border-radius: 5px;
-  font-size: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
 }
 .map-device-list > button.active {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--surface-hover);
+  color: var(--text);
 }
 .map-device-list small {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 2px;
 }
 .flat-map > svg {
@@ -241,7 +241,7 @@
 }
 .flat-node text {
   fill: var(--text);
-  font-size: 11px;
+  font-size: 13px;
   pointer-events: none;
   paint-order: stroke;
   stroke: var(--map-bg);
@@ -249,7 +249,7 @@
   stroke-linejoin: round;
 }
 .flat-node .node-glyph {
-  font-size: 12px;
+  font-size: 14px;
   fill: var(--accent);
   stroke: none;
 }

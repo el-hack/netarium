@@ -18,7 +18,14 @@ export function createScene(
   positions: Record<string, Position> = {},
 ): SceneHandle {
   const scene = new THREE.Scene();
-  const theme = () => getComputedStyle(container).getPropertyValue('--map-bg').trim() || '#101a20';
+  const themeColor = (token: string) => getComputedStyle(container).getPropertyValue(token).trim();
+  const theme = () => themeColor('--map-bg');
+  const themedMaterials: { color: THREE.Color; token: string }[] = [];
+  const materialColor = (token: string) => {
+    const color = new THREE.Color(themeColor(token));
+    themedMaterials.push({ color, token });
+    return color;
+  };
   scene.background = new THREE.Color(theme());
   scene.fog = new THREE.Fog(theme(), 55, 150);
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power' });
@@ -33,16 +40,17 @@ export function createScene(
   controls.minDistance = 10;
   controls.maxDistance = 150;
   controls.maxPolarAngle = Math.PI / 2.15;
-  scene.add(new THREE.HemisphereLight('#ffffff', '#d3ddc4', 2.7));
+  scene.add(new THREE.HemisphereLight('#ffffff', '#d9d9d9', 2.7));
   const light = new THREE.DirectionalLight('#ffffff', 3);
   light.position.set(-4, 12, 7);
   scene.add(light);
-  const rim = new THREE.DirectionalLight('#d0e3c2', 1.2);
+  const rim = new THREE.DirectionalLight('#e6e6e6', 1.2);
   rim.position.set(5, 3, -4);
   scene.add(rim);
   const resources: (THREE.BufferGeometry | THREE.Material)[] = [];
   function mesh(geometry: THREE.BufferGeometry, color: string) {
-    const material = new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.02 });
+    const material = new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.02 });
+    material.color = materialColor(color);
     resources.push(geometry, material);
     return new THREE.Mesh(geometry, material);
   }
@@ -55,7 +63,7 @@ export function createScene(
   function shadow(x: number, z: number, radius: number) {
     const geometry = new THREE.CircleGeometry(radius, 48);
     const material = new THREE.MeshBasicMaterial({
-      color: '#718b5e',
+      color: '#737373',
       transparent: true,
       opacity: 0.09,
       depthWrite: false,
@@ -78,7 +86,8 @@ export function createScene(
         ),
     );
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: '#47656a', transparent: true, opacity });
+    const material = new THREE.LineBasicMaterial({ transparent: true, opacity });
+    material.color = materialColor('--subtle');
     resources.push(geometry, material);
     scene.add(new THREE.LineLoop(geometry, material));
   }
@@ -86,13 +95,13 @@ export function createScene(
   ring(5.6, 0.75);
   ring(8, 0.45);
   const core = new THREE.Group();
-  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.24, 64), '#25403e');
+  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.24, 64), '--surface-hover');
   base.position.y = -0.2;
   core.add(base);
-  const sphere = mesh(new THREE.SphereGeometry(0.75, 48, 32), '#37af99');
+  const sphere = mesh(new THREE.SphereGeometry(0.75, 48, 32), '--muted');
   sphere.position.y = 0.6;
   core.add(sphere);
-  const halo = mesh(new THREE.TorusGeometry(1.05, 0.035, 12, 100), '#9bb37f');
+  const halo = mesh(new THREE.TorusGeometry(1.05, 0.035, 12, 100), '--subtle');
   halo.position.y = 0.6;
   halo.rotation.set(1.05, 0.3, -0.4);
   core.add(halo);
@@ -101,22 +110,26 @@ export function createScene(
   function deviceModel(device: Device) {
     const group = new THREE.Group();
     const tone =
-      device.status === 'unseen' ? '#84949a' : device.status === 'cached' ? '#cfab69' : '#4fc6b2';
+      device.status === 'unseen'
+        ? '--subtle'
+        : device.status === 'cached'
+          ? '--warning'
+          : '--success';
     const category = effectiveCategory(device);
-    const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '#31484e');
+    const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '--surface-hover');
     pedestal.position.y = -0.24;
     group.add(pedestal);
     if (category === 'computer' || category === 'media') {
       const screen = box(1.3, 0.86, 0.12, tone);
       screen.position.y = 0.55;
       group.add(screen);
-      const glass = box(1.1, 0.65, 0.02, '#e3edd9');
+      const glass = box(1.1, 0.65, 0.02, '--surface');
       glass.position.set(0, 0.58, 0.075);
       group.add(glass);
-      const bar = box(0.65, 0.045, 0.025, '#a8c18c');
+      const bar = box(0.65, 0.045, 0.025, '--subtle');
       bar.position.set(-0.13, 0.66, 0.095);
       group.add(bar);
-      const bar2 = box(0.42, 0.045, 0.025, '#bdcea9');
+      const bar2 = box(0.42, 0.045, 0.025, '--subtle');
       bar2.position.set(-0.24, 0.51, 0.095);
       group.add(bar2);
       const stem = box(0.12, 0.25, 0.13, tone);
@@ -130,13 +143,13 @@ export function createScene(
       router.position.y = 0.05;
       group.add(router);
       for (const x of [-0.43, 0.43]) {
-        const antenna = box(0.045, 0.7, 0.045, '#657f54');
+        const antenna = box(0.045, 0.7, 0.045, '--muted');
         antenna.position.set(x, 0.46, -0.23);
         antenna.rotation.z = x * 0.15;
         group.add(antenna);
       }
       for (let i = 0; i < 3; i++) {
-        const led = mesh(new THREE.SphereGeometry(0.035, 12, 8), '#f2f8df');
+        const led = mesh(new THREE.SphereGeometry(0.035, 12, 8), '--success');
         led.position.set(-0.3 + i * 0.15, 0.07, 0.385);
         group.add(led);
       }
@@ -145,14 +158,14 @@ export function createScene(
       const phone = box(width, 1.1, 0.12, tone);
       phone.position.y = 0.4;
       group.add(phone);
-      const glass = box(width - 0.13, 0.83, 0.02, '#e1ecd4');
+      const glass = box(width - 0.13, 0.83, 0.02, '--surface');
       glass.position.set(0, 0.43, 0.075);
       group.add(glass);
     } else if (category === 'printer') {
       const body = box(1.1, 0.55, 0.8, tone);
       body.position.y = 0.15;
       group.add(body);
-      const paper = box(0.75, 0.6, 0.03, '#f5f8ee');
+      const paper = box(0.75, 0.6, 0.03, '--surface');
       paper.position.set(0, 0.65, -0.22);
       group.add(paper);
     } else if (category === 'storage') {
@@ -160,7 +173,7 @@ export function createScene(
       tower.position.y = 0.35;
       group.add(tower);
       for (const y of [0.15, 0.4, 0.65]) {
-        const slot = box(0.6, 0.035, 0.025, '#e8f0dc');
+        const slot = box(0.6, 0.035, 0.025, '--surface');
         slot.position.set(0, y, 0.31);
         group.add(slot);
       }
@@ -168,7 +181,7 @@ export function createScene(
       const body = mesh(new THREE.SphereGeometry(0.43, 32, 24), tone);
       body.position.y = 0.35;
       group.add(body);
-      const orbit = mesh(new THREE.TorusGeometry(0.52, 0.025, 8, 50), '#dce9cb');
+      const orbit = mesh(new THREE.TorusGeometry(0.52, 0.025, 8, 50), '--subtle');
       orbit.position.y = 0.35;
       orbit.rotation.x = 1.1;
       group.add(orbit);
@@ -217,13 +230,13 @@ export function createScene(
     );
     const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
     const material = new THREE.LineDashedMaterial({
-      color: device.status === 'cached' ? '#bcab8a' : '#5c9e96',
       dashSize: 0.12,
       gapSize: 0.12,
       transparent: true,
       opacity: 0.65,
     });
     resources.push(geometry, material);
+    material.color = materialColor(device.status === 'cached' ? '--warning' : '--subtle');
     const link = new THREE.Line(geometry, material);
     link.computeLineDistances();
     scene.add(link);
@@ -323,6 +336,7 @@ export function createScene(
     if (!frame && !disposed) frame = requestAnimationFrame(render);
   };
   const themeObserver = new MutationObserver(() => {
+    for (const material of themedMaterials) material.color.set(themeColor(material.token));
     scene.background = new THREE.Color(theme());
     scene.fog = new THREE.Fog(theme(), 55, 150);
     schedule();

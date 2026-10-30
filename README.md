@@ -72,7 +72,7 @@ Les tests navigateur utilisent un collecteur déterministe, une base temporaire 
 - [Intelligence, agent, confidentialité et limites](docs/activity-intelligence.md)
 - [API d’intelligence](docs/api-intelligence.md)
 - [Identification des appareils](docs/identification.md)
-- [Design system](docs/design.md)
+- [Design system](docs/design.md) · [Référence Trovy et décisions de refonte](docs/redesign-trovy.md)
 - [Validation et limites de test](docs/validation.md)
 - [Audit avant refonte](docs/audit-intelligence.md)
 - [Contribution](CONTRIBUTING.md) · [Sécurité](SECURITY.md) · [Licence MIT](LICENSE)

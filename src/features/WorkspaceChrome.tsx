@@ -10,6 +10,8 @@ import {
   ArrowUpRight,
   FlaskConical,
   Radio,
+  House,
+  LockKeyhole,
 } from 'lucide-react';
 import { navigation, type Page } from '../navigation';
 import type { Device } from '../../shared/types';
@@ -32,7 +34,7 @@ export function WorkspaceChrome({
   children: ReactNode;
 }) {
   const [theme, setTheme] = useState(() =>
-    localStorage.getItem('netarium.theme') === 'light' ? 'light' : 'dark',
+    localStorage.getItem('netarium.theme') === 'dark' ? 'dark' : 'light',
   );
   const [menu, setMenu] = useState(false);
   const [command, setCommand] = useState(false);
@@ -75,6 +77,9 @@ export function WorkspaceChrome({
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('netarium.theme', theme);
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#121212' : '#fafafa');
   }, [theme]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
@@ -123,11 +128,9 @@ export function WorkspaceChrome({
       >
         <div className="brand">
           <span className="brand-mark">
-            <Orbit size={25} />
+            <Orbit size={24} strokeWidth={1.5} />
           </span>
-          <span>
-            netarium<small>NETWORK INTELLIGENCE</small>
-          </span>
+          <span>Netarium</span>
           <button
             className="icon-button mobile-only"
             aria-label="Fermer la navigation"
@@ -137,15 +140,21 @@ export function WorkspaceChrome({
           </button>
         </div>
         <div className="workspace-label">
-          <i />
-          Espace personnel <span>LOCAL</span>
+          <span className="workspace-avatar">
+            <House size={17} strokeWidth={1.5} />
+          </span>
+          <div>
+            <strong>Espace personnel</strong>
+            <small>Observatoire local</small>
+          </div>
+          <LockKeyhole size={14} aria-label="Espace privé" />
         </div>
         <nav>
           {navigation.map((item, index) => (
             <div key={item.id}>
               {[0, 3, 7].includes(index) && (
                 <span className="nav-group">
-                  {index === 0 ? 'EXPLORER' : index === 3 ? 'OBSERVER' : 'CONFIGURER'}
+                  {index === 0 ? 'Explorer' : index === 3 ? 'Observer' : 'Configurer'}
                 </span>
               )}
               <button
@@ -153,7 +162,7 @@ export function WorkspaceChrome({
                 className={page === item.id ? 'active' : ''}
                 onClick={() => go(item.id)}
               >
-                <item.icon size={18} />
+                <item.icon size={18} strokeWidth={1.5} />
                 <span>{item.label}</span>
                 {item.id === 'devices' && <small>{devices.length}</small>}
               </button>
@@ -191,8 +200,9 @@ export function WorkspaceChrome({
               <Menu size={20} />
             </button>
             <span className="breadcrumb">
-              Espace local <span>/</span>{' '}
-              <strong>{navigation.find((n) => n.id === page)?.label}</strong>
+              <House size={15} strokeWidth={1.5} aria-hidden="true" />
+              <span className="breadcrumb-workspace">Espace local</span>
+              <span>/</span> <strong>{navigation.find((n) => n.id === page)?.label}</strong>
             </span>
           </div>
           <div>
@@ -235,7 +245,7 @@ export function WorkspaceChrome({
         <footer className="workspace-footer">
           <span>
             <i />
-            LOCAL FIRST · PRIVATE BY DESIGN
+            Stockage local · Espace privé
           </span>
           <span>{demo ? 'Simulation isolée' : 'Observations sourcées. Aucune télémétrie.'}</span>
         </footer>

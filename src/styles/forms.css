@@ -1,12 +1,12 @@
 input,
 select,
 textarea {
-  border: 1px solid var(--border);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   background: var(--input);
   color: var(--text);
   padding: 9px 11px;
-  font-size: 12px;
+  font-size: 14px;
   min-height: 36px;
   max-width: 100%;
   width: 100%;
@@ -38,7 +38,7 @@ input[type='checkbox'] {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--muted);
   margin: 16px 0;
@@ -60,7 +60,7 @@ input[type='checkbox'] {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   background: var(--input);
   padding: 0 9px;
@@ -70,7 +70,7 @@ input[type='checkbox'] {
   border: 0;
   background: none;
   min-width: 0;
-  font-size: 11px;
+  font-size: 13px;
   padding: 7px 0;
   min-height: 33px;
   width: 200px;
@@ -95,11 +95,11 @@ input[type='checkbox'] {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .filter-bar select {
-  font-size: 11px;
+  font-size: 13px;
   width: auto;
   min-height: 34px;
 }
@@ -122,7 +122,7 @@ input[type='checkbox'] {
   gap: 6px;
   padding: 5px 9px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   border-radius: 4px;
 }
 .segmented button.selected {
@@ -142,7 +142,7 @@ input[type='checkbox'] {
 .settings-form > p {
   padding: 0 !important;
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .settings-form > .field:first-of-type {
   margin-top: 28px;
@@ -158,7 +158,7 @@ input[type='checkbox'] {
 }
 .settings-savebar > span,
 .drawer-savebar > span {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .capability {
@@ -173,11 +173,11 @@ input[type='checkbox'] {
   min-width: 0;
 }
 .capability strong {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 .capability p {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .capability-icon {
@@ -204,7 +204,7 @@ input[type='checkbox'] {
   color: var(--accent);
 }
 .privacy p {
-  font-size: 12px;
+  font-size: 14px;
   margin: 10px 0;
 }
 .privacy > div {
@@ -217,10 +217,10 @@ input[type='checkbox'] {
   color: var(--muted);
   background: var(--input);
   padding: 10px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
 }
 .storage-path code {
-  font-size: 9px;
+  font-size: 11px;
   word-break: break-all;
 }
 .export-buttons,
@@ -255,7 +255,7 @@ input[type='checkbox'] {
   border-radius: var(--radius-sm);
   color: var(--muted);
   margin: 12px 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .file-field span {
   flex: 1;
@@ -263,10 +263,10 @@ input[type='checkbox'] {
 .file-field small {
   display: block;
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .file-field input {
-  font-size: 10px;
+  font-size: 12px;
   max-width: 100%;
   border: 0;
   background: none;
@@ -277,7 +277,7 @@ input[type='checkbox'] {
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  font-size: 11px;
+  font-size: 13px;
   margin: 18px 0;
   color: var(--muted);
 }
@@ -286,7 +286,7 @@ input[type='checkbox'] {
   padding-left: 24px;
 }
 .import-schema p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
   margin: 9px 0;
 }
@@ -300,13 +300,13 @@ input[type='checkbox'] {
   max-width: 100%;
 }
 .import-schema small {
-  font-size: 10px;
+  font-size: 12px;
 }
 .consent-copy {
   display: grid;
   gap: 16px;
   padding-top: 12px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .consent-copy svg {
   color: var(--accent);
@@ -324,7 +324,8 @@ input[type='checkbox'] {
   max-width: calc(100vw - 24px);
 }
 dialog::backdrop {
-  background: #040a12b8;
+  background: #0006;
+  backdrop-filter: blur(3px);
 }
 .modal {
   border-radius: var(--radius-lg);
@@ -342,7 +343,7 @@ dialog::backdrop {
   margin-bottom: 16px;
 }
 .modal > p {
-  font-size: 12px;
+  font-size: 14px;
 }
 .command-dialog {
   width: 570px;
@@ -370,7 +371,7 @@ dialog::backdrop {
   overflow: auto;
 }
 .command-results .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   margin: 12px 8px 8px;
 }
 .command-results > button {
@@ -380,8 +381,8 @@ dialog::backdrop {
   width: 100%;
   text-align: left;
   padding: 10px;
-  border-radius: 5px;
-  font-size: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
   min-height: 37px;
 }
 .command-results button > svg:last-child {
@@ -390,7 +391,7 @@ dialog::backdrop {
 }
 .command-results small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
 }
 .command-results button:hover {
   background: var(--surface-hover);
@@ -398,7 +399,7 @@ dialog::backdrop {
 .command-help {
   padding: 12px 20px;
   border-top: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
 }
 .drawer {
   height: 100dvh;
@@ -409,9 +410,10 @@ dialog::backdrop {
   inset: 0 0 0 auto;
   margin: 0;
   padding: 0;
-  border-radius: 0;
-  border-block: 0;
-  border-right: 0;
+  border-radius: var(--radius-lg);
+  inset: 8px 8px 8px auto;
+  height: calc(100dvh - 16px);
+  max-height: calc(100dvh - 16px);
 }
 .drawer-content {
   padding: 25px;
@@ -425,8 +427,9 @@ dialog::backdrop {
   margin: 0;
 }
 .drawer-identity {
-  text-align: center;
-  padding: 20px 0 24px;
+  text-align: left;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
 }
 .drawer-identity h2 {
   font-size: 21px;
@@ -447,10 +450,10 @@ dialog::backdrop {
   margin-top: 2px;
 }
 .evidence-box strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 .evidence-box p {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 5px;
 }
 .identification-card {
@@ -467,7 +470,7 @@ dialog::backdrop {
   margin-bottom: 12px;
 }
 .identification-heading h3 {
-  font-size: 12px;
+  font-size: 14px;
 }
 .identification-result {
   font-size: 14px;
@@ -476,12 +479,12 @@ dialog::backdrop {
 }
 .identification-confidence {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--accent);
   margin-top: 5px;
 }
 .identification-card p {
-  font-size: 11px;
+  font-size: 13px;
   margin: 9px 0;
 }
 .identification-card ul {
@@ -496,20 +499,20 @@ dialog::backdrop {
   gap: 5px;
   padding: 9px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .identification-card code {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text);
 }
 .identification-card small {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 12px;
 }
 .identification-card summary {
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
 }
 .properties {
@@ -519,7 +522,7 @@ dialog::backdrop {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  font-size: 11px;
+  font-size: 13px;
   border-bottom: 1px solid var(--line);
   padding: 11px 0;
 }
@@ -531,7 +534,7 @@ dialog::backdrop {
   text-align: right;
   max-width: 65%;
   overflow-wrap: anywhere;
-  font-size: 11px;
+  font-size: 13px;
 }
 .form-section-title {
   display: flex;
@@ -544,7 +547,7 @@ dialog::backdrop {
   font-size: 13px;
 }
 .form-section-title span {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .discard-notice {
@@ -552,7 +555,7 @@ dialog::backdrop {
   border: 1px solid var(--warning);
   border-radius: var(--radius-sm);
   padding: 16px;
-  font-size: 12px;
+  font-size: 14px;
   margin: 16px 0;
 }
 .discard-notice p {
@@ -567,7 +570,7 @@ dialog::backdrop {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .ip-history summary {
   cursor: pointer;
@@ -583,6 +586,6 @@ dialog::backdrop {
   justify-content: space-between;
   gap: 12px;
   padding: 6px 0;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }

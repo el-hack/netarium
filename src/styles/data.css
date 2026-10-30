@@ -11,11 +11,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--line);
 }
 .section-heading .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   margin-bottom: 5px;
 }
 .section-heading h2 {
@@ -27,54 +27,62 @@
 .metric-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-bottom: 1px solid var(--border);
-  margin: 0 0 26px;
-  padding: 6px 0 24px;
-  gap: 0;
+  gap: 12px;
+  margin: 0 0 24px;
 }
 .stat {
-  padding: 4px 22px;
-  border-right: 1px solid var(--line);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-}
-.stat:first-child {
-  padding-left: 0;
-}
-.stat:last-child {
-  border-right: 0;
+  gap: 12px;
 }
 .stat > span {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .stat > strong {
-  font-size: 28px;
-  font-weight: 550;
-  letter-spacing: -0.8px;
-  line-height: 1.3;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.9px;
+  line-height: 1.2;
   overflow-wrap: anywhere;
 }
 .stat > small {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 .panel > .metric-strip {
   padding: 20px;
   margin: 0;
+  border-bottom: 1px solid var(--line);
+}
+.panel > .metric-strip .stat {
+  border: 0;
+  border-radius: 0;
+  padding: 0 16px;
+  border-right: 1px solid var(--line);
 }
 .panel > .metric-strip .stat:first-child {
   padding-left: 0;
+}
+.panel > .metric-strip .stat:last-child {
+  border-right: 0;
 }
 .visibility-band {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 22px;
-  font-size: 11px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  font-size: 12px;
 }
 .visibility-band > span {
   display: flex;
@@ -83,7 +91,7 @@
   flex-wrap: wrap;
 }
 .visibility-band > span > svg {
-  color: var(--accent);
+  color: var(--muted);
 }
 .visibility-band > span > span {
   color: var(--muted);
@@ -93,7 +101,7 @@
 }
 .overview-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1.75fr) minmax(270px, 1fr);
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
   gap: 20px;
 }
 .overview-columns.lower {
@@ -116,7 +124,7 @@
   padding: 14px 20px;
   text-align: left;
   border-bottom: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 13px;
   min-height: 60px;
 }
 .collector-summary button:last-child,
@@ -133,13 +141,13 @@
 }
 .collector-summary button > span:last-child,
 .overview-devices button > span:nth-child(3) {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .collector-summary small,
 .overview-devices small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .overview-devices strong {
@@ -154,7 +162,7 @@
   flex-shrink: 0;
 }
 .source-dot.active {
-  background: var(--accent);
+  background: var(--success);
 }
 .source-dot.error {
   background: var(--warning);
@@ -167,7 +175,7 @@
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .chart-readout > span {
@@ -183,7 +191,7 @@
 }
 .chart-readout small {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 11px;
 }
 .legend-dot {
   display: inline-block;
@@ -208,7 +216,7 @@
   stroke-dasharray: 3 5;
 }
 .chart-line {
-  stroke: var(--accent);
+  stroke: var(--chart-primary);
   stroke-width: 2;
   fill: none;
   vector-effect: non-scaling-stroke;
@@ -229,7 +237,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 12px;
 }
@@ -273,7 +281,7 @@
   font-weight: 500;
 }
 .chart-empty span {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   max-width: 340px;
 }
@@ -287,12 +295,12 @@ table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 11px;
+  font-size: 13px;
 }
 th {
   font-weight: 550;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   background: var(--surface-raised);
   padding: 11px 16px;
   white-space: nowrap;
@@ -311,22 +319,22 @@ tbody tr:hover {
 }
 td strong {
   font-weight: 550;
-  font-size: 12px;
+  font-size: 14px;
 }
 td small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 4px;
   color: var(--muted);
 }
 td code {
-  font-size: 11px;
+  font-size: 13px;
 }
 .status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .status i {
@@ -336,10 +344,10 @@ td code {
   border-radius: 50%;
 }
 .status.observed {
-  color: var(--accent);
+  color: var(--success);
 }
 .status.observed i {
-  background: var(--accent);
+  background: var(--success);
 }
 .status.cached {
   color: var(--warning);
@@ -351,7 +359,7 @@ td code {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   padding: 3px 6px;
   background: var(--surface-raised);
@@ -364,7 +372,7 @@ td code {
   align-items: center;
   justify-content: flex-end;
   padding: 16px 0;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   flex-wrap: wrap;
 }
@@ -395,11 +403,11 @@ td code {
 }
 .event-timeline strong {
   font-weight: 500;
-  font-size: 11px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .event-timeline p {
-  font-size: 10px;
+  font-size: 12px;
   margin: 4px 0 6px;
 }
 .event-symbol {
@@ -427,11 +435,11 @@ td code {
   flex-shrink: 0;
 }
 .event-time time {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .event-time .text-button {
-  font-size: 10px;
+  font-size: 12px;
 }
 .device-picker {
   display: grid;
@@ -452,11 +460,11 @@ td code {
 .device-picker > button > span {
   flex: 1;
   min-width: 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .device-picker small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 5px;
 }
 .device-picker button:hover {
@@ -473,7 +481,7 @@ td code {
   margin: 5px 0;
 }
 .device-masthead p {
-  font-size: 12px;
+  font-size: 14px;
 }
 .device-select {
   margin-left: auto;
@@ -487,22 +495,22 @@ td code {
   margin-bottom: 16px;
 }
 .activity-tabs > button {
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
   padding: 12px 0 14px;
   border-bottom: 2px solid transparent;
   color: var(--muted);
 }
 .activity-tabs > button.active {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--text);
+  color: var(--text);
 }
 .activity-context {
   display: flex;
   align-items: center;
   gap: 20px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   margin-bottom: 18px;
   flex-wrap: wrap;
 }
@@ -513,7 +521,7 @@ td code {
 }
 .activity-context > .text-button {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 12px;
 }
 .capability-explanation {
   padding: 24px;
@@ -523,18 +531,18 @@ td code {
   margin-bottom: 20px;
 }
 .capability-explanation p {
-  font-size: 12px;
+  font-size: 14px;
   margin: 12px 0 18px;
 }
 .capability-explanation button {
-  font-size: 11px;
+  font-size: 13px;
 }
 .activity-search {
   display: flex;
   align-items: center;
   gap: 15px;
   margin-bottom: 16px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .activity-search input {
@@ -548,7 +556,7 @@ td code {
   margin-bottom: 25px;
 }
 .analysis-heading p {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 7px;
   max-width: 600px;
 }
@@ -568,10 +576,10 @@ td code {
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
   padding: 16px 20px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .ranked-list strong {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--muted);
 }
@@ -587,9 +595,9 @@ td code {
   border: 1px solid var(--border);
 }
 .device-icon.sage {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border-color: transparent;
+  background: var(--surface-raised);
+  color: var(--text);
+  border-color: var(--border);
 }
 .device-icon.large {
   width: 56px;
@@ -609,12 +617,12 @@ td code {
 }
 .count-pill {
   display: inline-block;
-  font-size: 10px;
+  font-size: 12px;
   min-width: 22px;
   text-align: center;
   background: var(--surface-raised);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   padding: 1px 6px;
   color: var(--muted);
   margin-left: 7px;
@@ -633,11 +641,11 @@ td code {
   flex-wrap: wrap;
 }
 .filter-tabs > button {
-  font-size: 10px;
+  font-size: 12px;
   padding: 6px 9px;
   min-height: 30px;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
 }
 .filter-tabs > button.active {
@@ -647,7 +655,7 @@ td code {
 }
 .filter-tabs span {
   margin-left: 6px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .sort-field {
@@ -657,7 +665,7 @@ td code {
   color: var(--muted);
 }
 .sort-field select {
-  font-size: 10px;
+  font-size: 12px;
   border: 0;
   min-height: 30px;
   background: transparent;
@@ -700,7 +708,7 @@ td code {
 }
 .device-card p,
 .device-card small {
-  font-size: 10px;
+  font-size: 12px;
 }
 .device-card-top,
 .device-card-bottom {
@@ -714,7 +722,7 @@ td code {
   padding-top: 10px;
   margin-top: 10px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 .inventory-footer {
   display: flex;
@@ -722,7 +730,7 @@ td code {
   justify-content: space-between;
   padding: 14px 20px;
   border-top: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .inventory-footer span {
@@ -752,7 +760,7 @@ td code {
   flex: 1;
 }
 .visibility-banner p {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 7px;
   max-width: 800px;
 }
@@ -795,17 +803,17 @@ td code {
   flex-wrap: wrap;
 }
 .source-details > p {
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 4px;
 }
 .source-details > small {
   display: block;
   margin-top: 12px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .source-details dl {
   margin: 14px 0 0;
-  font-size: 11px;
+  font-size: 13px;
   display: grid;
   gap: 5px;
 }
@@ -822,10 +830,10 @@ td code {
   color: var(--text);
 }
 .source-row > .button {
-  font-size: 11px;
+  font-size: 13px;
 }
 .matrix-yes {
-  color: var(--accent);
+  color: var(--success);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -844,7 +852,7 @@ td code {
   margin: 12px 0 6px;
 }
 .extension-grid p {
-  font-size: 12px;
+  font-size: 14px;
 }
 .alert-list {
   border: 1px solid var(--border);
@@ -882,7 +890,7 @@ td code {
   background: var(--warning-bg);
 }
 .alert-row p {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
   margin: 8px 0;
 }
@@ -892,10 +900,10 @@ td code {
   align-items: center;
   flex-wrap: wrap;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 .alert-meta .text-button {
-  font-size: 10px;
+  font-size: 12px;
 }
 .alert-actions {
   display: flex;
@@ -931,18 +939,18 @@ td code {
   gap: 12px;
   padding: 14px 10px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 14px;
 }
 .scan-timeline button.active {
-  background: var(--accent-bg);
+  background: var(--surface-hover);
 }
 .scan-timeline small {
   display: block;
   margin: 5px 0;
-  font-size: 10px;
+  font-size: 12px;
 }
 .scan-timeline .mono {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .timeline-symbol {
@@ -958,7 +966,7 @@ td code {
 .comparison > .muted {
   padding: 0 !important;
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .comparison-placeholder {
   text-align: center;
@@ -978,18 +986,18 @@ td code {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .diff-items p {
   display: flex;
   gap: 10px;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   margin: 15px 0;
 }
 .diff-items span {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 12px;
   display: flex;
   gap: 6px;
   align-items: center;
@@ -998,7 +1006,7 @@ td code {
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   margin: 20px 0;
 }
@@ -1026,8 +1034,8 @@ td code {
   padding: 10px;
   margin: 7px 0 0;
   border: 1px solid var(--border);
-  border-radius: 5px;
-  font-size: 9px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
   max-width: 260px;
   background: var(--input);
 }

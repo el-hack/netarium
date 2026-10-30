@@ -1,15 +1,15 @@
-# Premium Network Intelligence
+# Design system Netarium — référence Trovy
 
-Direction propre à Netarium : graphite, surfaces sobres, accent menthe réservé aux actions et données observées, typographie système sans ressources externes. Mode clair équivalent, aucune animation de trafic décorative.
+Langage adapté depuis les composants et tokens de l’application Trovy : surfaces neutres, sélection grise, bleu pour les actions et interactions, états sémantiques distincts. Netarium conserve ses composants, sa marque et sa logique métier. Le [contrat de refonte](redesign-trovy.md) documente les références et arbitrages. Aucun composant métier Trovy n’est importé. La police Gellix TRIAL étant réservée à l’usage personnel, la distribution open source conserve une pile de polices système, sans chargement externe.
 
 ## Système
 
-`src/styles/tokens.css` centralise primitives et couleurs sémantiques : fond, surface, surface surélevée, interaction, texte, texte secondaire, bordure, accent, avertissement, erreur, seconde série de graphique. Les deux thèmes utilisent les mêmes composants. Échelle d’espacement 4–48 px, rayons 6/10/16 px, transition 140 ms ; les géométries de carte/graphiques disposent de leurs unités propres.
+`src/styles/tokens.css` centralise fond, surfaces, champs, texte, bordures, action primaire, lien, focus, succès, avertissement, erreur et séries de graphiques. Le bleu plein `#0063e6` garde un libellé blanc ; les liens prennent un bleu plus clair en mode sombre pour conserver leur contraste. Le succès dispose de sa propre couleur verte. Les deux thèmes utilisent les mêmes composants. Échelle d’espacement 4–48 px, rayons 8/12/16 px, transition d’opacité 150 ms ; les géométries de carte/graphiques disposent de leurs unités propres. Titres 28 px, texte courant 14 px, données compactes 12–13 px, chiffres tabulaires. Les matériaux Three.js lisent les tokens et suivent le thème sans recréer la scène.
 
-Les feuilles séparent tokens, structure, présentation des données, formulaires, carte et adaptations. Les anciens styles de l’interface ivoire ont été retirés. Primitives React : Panel, Metric, Empty, Skeleton, SourceBadge/Provenance, Modal, TrafficChart.
+Les feuilles séparent tokens, structure, présentation des données, formulaires, carte et adaptations. La refonte remplace les règles existantes, sans feuille de surcharge ni nouveau framework. Primitives React : Panel, Metric, Empty, Skeleton, SourceBadge/Provenance, Modal, TrafficChart.
 
-- **Structure** : barre latérale compacte, navigation en trois groupes, recherche globale, contexte réseau/période conservé dans l’URL.
-- **Overview** : bande de visibilité, ligne de métriques, graphique et état des sources, puis observations et inventaire. Aucun score arbitraire de santé.
+- **Structure** : navigation de 248 px (220 px en largeur intermédiaire), trois groupes, espace principal encadré et arrondi, recherche globale et contexte réseau/période conservé dans l’URL. Thème clair pour les nouvelles installations, préférence déjà enregistrée conservée. La couleur de la barre système suit le thème.
+- **Overview** : bande de visibilité, indicateurs séparés, graphique et état des sources, puis observations et inventaire. Aucun score arbitraire de santé.
 - **Network Explorer** : surface de carte, contrôles, filtre d’identité, inspecteur latéral et sélection historique. Liens explicités ; accès direct à l’activité.
 - **Activity Explorer** : identité en tête, onglets d’analyse, provenance et tables spécialisées. Les domaines, processus et octets gardent des unités distinctes.
 - **Data Sources** : lignes détaillées avec permissions, capacités, limites et état ; matrice par appareil ; import guidé et extensions non intégrées clairement étiquetées.
