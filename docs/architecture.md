@@ -43,3 +43,13 @@ La première plateforme validée est macOS. Les formats de voisinage Linux et Wi
 ## Identification
 
 Le domaine partagé possède les règles et la priorité des annotations. Le collecteur mDNS est isolé de la découverte d’hôtes et ne change pas la preuve de présence. Les indices et la suggestion sont figés au moment de la persistance. Voir [la conception détaillée](identification.md).
+
+## 7. Journal d’intelligence et sources optionnelles
+
+Le module `server/intelligence` sépare collecteurs système, stockage journalisé, orchestration/alertes et routes. Les contrats partagés décrivent provenance, valeurs inconnues et requêtes ; la classification de services par port demeure une inférence faible. Le frontend est organisé en domaines (`features`) et primitives (`ui`), avec séparation de l’état serveur, du contexte URL et des saisies locales.
+
+Deux bases évitent de mêler les instantanés d’identité et le journal volumineux. La migration d’inventaire 2 ajoute les tags transactionnellement, sans réécrire les instantanés historiques. Le journal est recréable à partir de sources conservées seulement dans leurs limites, pas depuis du trafic qui n’a jamais été collecté. Les sorties système brutes ne sont pas archivées afin de minimiser les métadonnées privées.
+
+Les compteurs et sockets nécessitent consentement. Leur configuration est sérialisée ; un seul échantillonnage s’exécute à la fois, les commandes sont bornées, et l’arrêt annule les opérations. L’activation ne persiste pas après redémarrage, contrairement aux observations, seuils, états de traitement et positions. Les requêtes sont paginées et les agrégats calculés par SQLite. Le polling est retenu pour la simplicité d’un service local mono-utilisateur : 5 secondes côté interface, 10 secondes côté collecteurs, aucune infrastructure de streaming externe.
+
+Les identités d’import sont confirmées manuellement ; les événements sont dédupliqués avec une empreinte stable. Les sources ne sont pas agrégées aveuglément : volumes d’interface et flux importés restent distincts. Les agents distants nécessiteront un transport authentifié et une gestion d’identité dédiée avant toute ouverture réseau. Les limites, API et procédures sont détaillées dans [Intelligence](activity-intelligence.md) et [API](api-intelligence.md).

@@ -1,3 +1,6 @@
+import { IntelligenceService } from './intelligence/service.js';
+import { IntelligenceStore } from './intelligence/store.js';
+import { intelligenceRoutes } from './intelligence/routes.js';
 import { effectiveCategory } from '../shared/identification.js';
 import Fastify from 'fastify';
 import { z } from 'zod';
@@ -13,12 +16,18 @@ interface AppOptions {
   capabilities: Capabilities;
   listInterfaces?: () => Promise<NetworkInterface[]>;
   logger?: boolean;
+  intelligence?: IntelligenceService;
 }
 const annotation = z
   .object({
     label: z.string().trim().max(80),
     category: z.enum(categories),
     notes: z.string().trim().max(2000),
+    tags: z
+      .array(z.string().trim().min(1).max(30))
+      .max(12)
+      .transform((tags) => [...new Set(tags)])
+      .optional(),
   })
   .strict();
 const settingsSchema = z
@@ -40,6 +49,7 @@ export async function createApp({
   capabilities,
   listInterfaces = interfaces,
   logger = false,
+  intelligence = new IntelligenceService(new IntelligenceStore(':memory:'), store, listInterfaces),
 }: AppOptions) {
   const app = Fastify({ logger, bodyLimit: 16384, requestTimeout: 10000 });
   const allowedHosts = new Set([`127.0.0.1:${port}`, `localhost:${port}`]);
@@ -83,6 +93,10 @@ export async function createApp({
           : (error as Error).message,
     });
   });
+  intelligenceRoutes(app, intelligence, store);
+  app.get<{ Params: { id: string } }>('/api/devices/:id/history', async (request) =>
+    store.deviceHistory(request.params.id),
+  );
   app.get('/api/health', async () => ({
     application: 'netarium',
     status: 'ok',
@@ -185,6 +199,7 @@ export async function createApp({
   });
   app.addHook('onClose', async () => {
     await coordinator.close();
+    await intelligence.close();
   });
   return app;
 }

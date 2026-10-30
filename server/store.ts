@@ -10,6 +10,7 @@ interface DeviceRow {
   label: string;
   category: Category;
   notes: string;
+  tags: string;
   first_seen: string;
   last_seen: string;
   last_data: string;
@@ -53,6 +54,11 @@ export class Store {
       CREATE TABLE IF NOT EXISTS settings(id INTEGER PRIMARY KEY CHECK(id=1), data TEXT NOT NULL);
       INSERT OR IGNORE INTO migrations(version) VALUES(1);
       INSERT OR IGNORE INTO settings(id,data) VALUES(1,'{"intervalMinutes":0,"retentionDays":30,"interfaceId":null}');`);
+    if (!this.db.prepare('SELECT version FROM migrations WHERE version=2').get()) {
+      this.db.exec(
+        "BEGIN IMMEDIATE; ALTER TABLE devices ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'; INSERT INTO migrations VALUES(2); COMMIT;",
+      );
+    }
     this.db
       .prepare(
         "UPDATE scans SET status='failed', error='Collecte interrompue par un arrêt de l’application.', finished_at=? WHERE status='running'",
@@ -89,6 +95,7 @@ export class Store {
       label: row.label,
       category: row.category,
       notes: row.notes,
+      tags: JSON.parse(row.tags),
       firstSeen: row.first_seen,
       lastSeen: row.last_seen,
     };
@@ -125,6 +132,7 @@ export class Store {
           label: row?.label ?? '',
           category: row?.category ?? 'unknown',
           notes: row?.notes ?? '',
+          tags: JSON.parse(row?.tags ?? '[]'),
           firstSeen: row?.first_seen ?? now,
           lastSeen: now,
           observedAt: now,
@@ -187,14 +195,30 @@ export class Store {
       };
     });
   }
-  annotate(id: string, input: { label: string; category: Category; notes: string }): boolean {
+  annotate(
+    id: string,
+    input: { label: string; category: Category; notes: string; tags?: string[] },
+  ): boolean {
     return (
       Number(
         this.db
-          .prepare('UPDATE devices SET label=?,category=?,notes=? WHERE id=?')
-          .run(input.label, input.category, input.notes, id).changes,
+          .prepare('UPDATE devices SET label=?,category=?,notes=?,tags=COALESCE(?,tags) WHERE id=?')
+          .run(
+            input.label,
+            input.category,
+            input.notes,
+            input.tags ? JSON.stringify(input.tags) : null,
+            id,
+          ).changes,
       ) > 0
     );
+  }
+  deviceHistory(id: string) {
+    return this.db
+      .prepare(
+        "SELECT scans.finished_at AS timestamp,json_extract(item.value,'$.ip') AS ip FROM snapshots JOIN scans ON scans.id=snapshots.scan_id,json_each(snapshots.data) AS item WHERE json_extract(item.value,'$.id')=? ORDER BY scans.started_at DESC LIMIT 200",
+      )
+      .all(id);
   }
   scan(id: string): Scan | null {
     const row = this.db.prepare('SELECT * FROM scans WHERE id=?').get(id) as ScanRow | undefined;

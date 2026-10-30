@@ -1,3 +1,5 @@
+import { IntelligenceStore } from '../server/intelligence/store.js';
+import { IntelligenceService } from '../server/intelligence/service.js';
 // Deterministic collector used only by browser tests; never imported by the application.
 import { join, resolve } from 'node:path';
 import fastifyStatic from '@fastify/static';
@@ -85,7 +87,34 @@ const coordinator = new Coordinator(
   async () => [network],
 );
 const port = Number(process.env.PORT);
+let counterReads = 0;
+const intelligence = new IntelligenceService(
+  new IntelligenceStore(join(process.env.NETARIUM_DATA_DIR!, 'activity.sqlite')),
+  store,
+  async () => [network],
+  {
+    readCounters: async () => ({
+      rx: ++counterReads * 100000,
+      tx: counterReads * 20000,
+      time: Date.now(),
+    }),
+    readConnections: async () => [
+      {
+        localIp: network.address,
+        remoteIp: '203.0.113.10',
+        localPort: 54321,
+        remotePort: 443,
+        protocol: 'TCP',
+        process: 'Test Browser',
+        pid: 42,
+        state: 'ESTABLISHED',
+        domain: null,
+      },
+    ],
+  },
+);
 const app = await createApp({
+  intelligence,
   store,
   coordinator,
   port,

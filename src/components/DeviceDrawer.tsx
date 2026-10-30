@@ -9,20 +9,39 @@ export function DeviceDrawer({
   onClose,
   onSaved,
   readOnly = false,
+  onActivity,
 }: {
   device: Device;
   onClose: () => void;
   onSaved: () => Promise<void>;
   readOnly?: boolean;
+  onActivity?: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [label, setLabel] = useState(device.label);
   const [category, setCategory] = useState<Category>(device.category);
   const [notes, setNotes] = useState(device.notes);
+  const [tags, setTags] = useState((device.tags ?? []).join(', '));
+  const [history, setHistory] = useState<{ timestamp: string; ip: string }[]>([]);
+  useEffect(() => {
+    if (readOnly) return;
+    const controller = new AbortController();
+    void api<{ timestamp: string; ip: string }[]>(
+      `/devices/${encodeURIComponent(device.id)}/history`,
+      { signal: controller.signal },
+    )
+      .then(setHistory)
+      .catch(() => {});
+    return () => controller.abort();
+  }, [device.id, readOnly]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const dirty = label !== device.label || category !== device.category || notes !== device.notes;
+  const dirty =
+    label !== device.label ||
+    category !== device.category ||
+    notes !== device.notes ||
+    tags !== (device.tags ?? []).join(', ');
   function requestClose() {
     if (busy) return;
     if (dirty) setConfirmDiscard(true);
@@ -40,7 +59,15 @@ export function DeviceDrawer({
     try {
       await api(`/devices/${device.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ label, category, notes }),
+        body: JSON.stringify({
+          label,
+          category,
+          notes,
+          tags: tags
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean),
+        }),
       });
       await onSaved();
       onClose();
@@ -96,6 +123,11 @@ export function DeviceDrawer({
             </p>
           </div>
         </div>
+        {onActivity && (
+          <button disabled={dirty} className="button primary full" onClick={onActivity}>
+            Ouvrir Activity Explorer
+          </button>
+        )}
         <IdentificationCard device={device} />
         <dl className="properties">
           <div>
@@ -127,6 +159,19 @@ export function DeviceDrawer({
             <dd className="mono">{device.network}</dd>
           </div>
         </dl>
+        {history.length > 0 && (
+          <details className="ip-history">
+            <summary>Historique des adresses ({history.length} relevés maximum 200)</summary>
+            <ol>
+              {history.map((h, i) => (
+                <li key={i}>
+                  <code>{h.ip}</code>
+                  <time>{dateTime(h.timestamp)}</time>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
         {confirmDiscard && (
           <div className="discard-notice" role="alert">
             <strong>Conserver vos modifications ?</strong>
@@ -178,6 +223,16 @@ export function DeviceDrawer({
           <p className="hint">
             Un choix manuel remplace la suggestion. « Automatique » réactive la détection.
           </p>
+          <label className="field">
+            Tags (séparés par des virgules)
+            <input
+              disabled={readOnly || busy}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="Bureau, personnel…"
+              maxLength={370}
+            />
+          </label>
           <label className="field">
             Notes
             <textarea

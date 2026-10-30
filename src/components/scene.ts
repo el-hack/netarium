@@ -1,3 +1,4 @@
+import { defaultPosition, type Position } from '../../shared/layout';
 import { effectiveCategory } from '../../shared/identification';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -14,10 +15,12 @@ export function createScene(
   devices: Device[],
   onSelect: (device: Device) => void,
   flat = false,
+  positions: Record<string, Position> = {},
 ): SceneHandle {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#f4f7ee');
-  scene.fog = new THREE.Fog('#f4f7ee', 55, 150);
+  const theme = () => getComputedStyle(container).getPropertyValue('--map-bg').trim() || '#101a20';
+  scene.background = new THREE.Color(theme());
+  scene.fog = new THREE.Fog(theme(), 55, 150);
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -25,7 +28,7 @@ export function createScene(
   container.appendChild(renderer.domElement);
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 250);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enablePan = false;
+  controls.enablePan = true;
   controls.enableRotate = !flat;
   controls.minDistance = 10;
   controls.maxDistance = 150;
@@ -75,7 +78,7 @@ export function createScene(
         ),
     );
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: '#c9d8ba', transparent: true, opacity });
+    const material = new THREE.LineBasicMaterial({ color: '#47656a', transparent: true, opacity });
     resources.push(geometry, material);
     scene.add(new THREE.LineLoop(geometry, material));
   }
@@ -83,10 +86,10 @@ export function createScene(
   ring(5.6, 0.75);
   ring(8, 0.45);
   const core = new THREE.Group();
-  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.24, 64), '#e1ead5');
+  const base = mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.24, 64), '#25403e');
   base.position.y = -0.2;
   core.add(base);
-  const sphere = mesh(new THREE.SphereGeometry(0.75, 48, 32), '#63845a');
+  const sphere = mesh(new THREE.SphereGeometry(0.75, 48, 32), '#37af99');
   sphere.position.y = 0.6;
   core.add(sphere);
   const halo = mesh(new THREE.TorusGeometry(1.05, 0.035, 12, 100), '#9bb37f');
@@ -98,9 +101,9 @@ export function createScene(
   function deviceModel(device: Device) {
     const group = new THREE.Group();
     const tone =
-      device.status === 'unseen' ? '#b8c2aa' : device.status === 'cached' ? '#c9b48e' : '#88a66a';
+      device.status === 'unseen' ? '#84949a' : device.status === 'cached' ? '#cfab69' : '#4fc6b2';
     const category = effectiveCategory(device);
-    const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '#fdfef8');
+    const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '#31484e');
     pedestal.position.y = -0.24;
     group.add(pedestal);
     if (category === 'computer' || category === 'media') {
@@ -185,11 +188,16 @@ export function createScene(
   const clickable: THREE.Object3D[] = [];
   const deviceByMesh = new Map<THREE.Object3D, Device>();
   const sorted = [...devices].sort((a, b) => a.id.localeCompare(b.id)).slice(0, 100);
-  const radius = 5.1 + Math.floor(Math.max(0, sorted.length - 1) / 8) * 2.5;
-  sorted.forEach((device, index) => {
-    const angle = 0.4 + index * 2.399963;
-    const distance = 5.1 + Math.floor(index / 8) * 2.5;
-    const position = new THREE.Vector3(Math.cos(angle) * distance, 0, Math.sin(angle) * distance);
+  const radius = Math.max(
+    8,
+    ...sorted.map((d) => {
+      const p = positions[d.id] ?? defaultPosition(d.id);
+      return Math.hypot(p.x, p.y);
+    }),
+  );
+  sorted.forEach((device) => {
+    const saved = positions[device.id] ?? defaultPosition(device.id);
+    const position = new THREE.Vector3(saved.x, 0, saved.y);
     const model = deviceModel(device);
     model.position.copy(position);
     model.traverse((object) => {
@@ -209,7 +217,7 @@ export function createScene(
     );
     const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
     const material = new THREE.LineDashedMaterial({
-      color: device.status === 'cached' ? '#bcab8a' : '#9bb787',
+      color: device.status === 'cached' ? '#bcab8a' : '#5c9e96',
       dashSize: 0.12,
       gapSize: 0.12,
       transparent: true,
@@ -248,23 +256,81 @@ export function createScene(
     renderer.render(scene, camera);
     const width = container.clientWidth,
       height = container.clientHeight;
+    const occupied: { x: number; y: number; width: number; height: number }[] = [];
     for (const label of labels) {
       projected.copy(label.position).project(camera);
-      const half = label.element.offsetWidth / 2 + 10;
-      const x = THREE.MathUtils.clamp((projected.x * 0.5 + 0.5) * width, half, width - half);
-      const y = THREE.MathUtils.clamp(
-        (-projected.y * 0.5 + 0.5) * height,
-        50,
-        height - (width < 400 ? 115 : 75),
+      // Screen-space labels must not obscure one another, including on narrow viewports.
+      label.element.hidden = false;
+      const labelWidth = label.element.offsetWidth,
+        labelHeight = label.element.offsetHeight;
+      const baseX = THREE.MathUtils.clamp(
+        (projected.x * 0.5 + 0.5) * width,
+        labelWidth / 2 + 10,
+        width - labelWidth / 2 - 10,
       );
-      label.element.style.transform = `translate(-50%, 0) translate(${x}px, ${y}px)`;
-      label.element.hidden =
-        projected.z > 1 || Math.abs(projected.x) > 1.4 || Math.abs(projected.y) > 1.4;
+      const baseY = THREE.MathUtils.clamp((-projected.y * 0.5 + 0.5) * height, 45, height - 110);
+      let placed: { x: number; y: number; width: number; height: number } | null = null;
+      for (const [dx, dy] of [
+        [0, 0],
+        [0, -1],
+        [0, 1],
+        [-1, 0],
+        [1, 0],
+        [0, -2],
+        [0, 2],
+        [-1, -1],
+        [1, -1],
+        [-1, 1],
+        [1, 1],
+      ]) {
+        const box = {
+          x: baseX + dx * (labelWidth + 8) - labelWidth / 2,
+          y: baseY + dy * (labelHeight + 8),
+          width: labelWidth,
+          height: labelHeight,
+        };
+        if (
+          box.x < 8 ||
+          box.x + box.width > width - 8 ||
+          box.y < 40 ||
+          box.y + box.height > height - 100
+        )
+          continue;
+        if (
+          occupied.some(
+            (other) =>
+              box.x < other.x + other.width + 6 &&
+              box.x + box.width + 6 > other.x &&
+              box.y < other.y + other.height + 6 &&
+              box.y + box.height + 6 > other.y,
+          )
+        )
+          continue;
+        placed = box;
+        break;
+      }
+      const visible =
+        placed && projected.z <= 1 && Math.abs(projected.x) <= 1.4 && Math.abs(projected.y) <= 1.4;
+      label.element.hidden = !visible;
+      if (visible && placed) {
+        occupied.push(placed);
+        label.element.style.transform = `translate(${placed.x}px,${placed.y}px)`;
+      }
     }
+    labelsRoot.dataset.ready = 'true';
   }
   const schedule = () => {
     if (!frame && !disposed) frame = requestAnimationFrame(render);
   };
+  const themeObserver = new MutationObserver(() => {
+    scene.background = new THREE.Color(theme());
+    scene.fog = new THREE.Fog(theme(), 55, 150);
+    schedule();
+  });
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
   controls.addEventListener('change', schedule);
   controls.addEventListener('start', () => {
     cameraTouched = true;
@@ -275,7 +341,7 @@ export function createScene(
     if (!width || !height) return;
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    const distance = Math.max(18, radius * 3.5) * Math.max(1, 1.25 / camera.aspect);
+    const distance = Math.max(18, radius * 2.6) * Math.max(1, 1.25 / camera.aspect);
     initial
       .copy(flat ? new THREE.Vector3(0, 1, 0.001) : new THREE.Vector3(0, 0.7, 1))
       .normalize()
@@ -333,6 +399,7 @@ export function createScene(
       disposed = true;
       cancelAnimationFrame(frame);
       resize.disconnect();
+      themeObserver.disconnect();
       controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', pointerDown);
       renderer.domElement.removeEventListener('pointerup', pointerUp);

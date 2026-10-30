@@ -1,3 +1,6 @@
+import { IntelligenceStore } from './intelligence/store.js';
+import { IntelligenceService } from './intelligence/service.js';
+import { interfaces } from './network.js';
 import { mkdir, chmod, readFile, access } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +28,11 @@ try {
   const app = await createApp({
     store,
     coordinator,
+    intelligence: new IntelligenceService(
+      new IntelligenceStore(join(dataDirectory, 'activity.sqlite')),
+      store,
+      interfaces,
+    ),
     port,
     logger: true,
     capabilities: {
@@ -33,7 +41,7 @@ try {
       ping: Boolean(await executable('ping')),
       neighbor: Boolean(await executable(platform() === 'linux' ? 'ip' : 'arp')),
       dataDirectory,
-      version: '0.1.0',
+      version: '0.2.0',
     },
   });
   let closing = false;

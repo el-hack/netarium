@@ -18,16 +18,21 @@ export function DeviceList({
   devices,
   onSelect,
   compact = false,
+  onActivity,
 }: {
   devices: Device[];
   onSelect: (device: Device) => void;
   compact?: boolean;
+  onActivity?: (id: string) => void;
 }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<DeviceFilter>('all');
   const [sort, setSort] = useState<DeviceSort>('name');
   const [view, setView] = useState<'list' | 'grid'>('list');
+  const [page, setPage] = useState(0);
   const filtered = selectDevices(devices, { query, status: filter, sort });
+  const currentPage = Math.min(page, Math.max(0, Math.ceil(filtered.length / 50) - 1));
+  const visible = filtered.slice(currentPage * 50, currentPage * 50 + 50);
   return (
     <section
       className={`panel device-panel ${compact ? 'compact' : ''} ${view === 'grid' ? 'grid-view' : ''}`}
@@ -127,7 +132,7 @@ export function DeviceList({
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((device) => (
+                {visible.map((device) => (
                   <tr key={device.id}>
                     <td>
                       <button className="device-link" onClick={() => onSelect(device)}>
@@ -137,6 +142,9 @@ export function DeviceList({
                         <span>
                           <strong>{deviceName(device)}</strong>
                           <small>{subtitle(device)}</small>
+                          {Boolean(device.tags?.length) && (
+                            <small>{device.tags!.join(' · ')}</small>
+                          )}
                         </span>
                       </button>
                     </td>
@@ -150,6 +158,15 @@ export function DeviceList({
                     </td>
                     <td className="muted last-seen-cell">{dateTime(device.lastSeen)}</td>
                     <td>
+                      {onActivity && (
+                        <button
+                          className="text-button"
+                          onClick={() => onActivity(device.id)}
+                          aria-label={`Activité de ${deviceName(device)}`}
+                        >
+                          Activité
+                        </button>
+                      )}
                       <button
                         className="icon-button"
                         onClick={() => onSelect(device)}
@@ -164,7 +181,7 @@ export function DeviceList({
             </table>
           </div>
           <div className="device-cards">
-            {filtered.map((device) => (
+            {visible.map((device) => (
               <button
                 className="device-card"
                 key={device.id}
@@ -223,6 +240,27 @@ export function DeviceList({
               Réinitialiser les filtres
             </button>
           )}
+        </div>
+      )}
+      {filtered.length > 50 && (
+        <div className="pagination">
+          <button
+            className="button secondary"
+            disabled={currentPage === 0}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            Précédent
+          </button>
+          <span>
+            {currentPage + 1} / {Math.ceil(filtered.length / 50)}
+          </span>
+          <button
+            className="button secondary"
+            disabled={(currentPage + 1) * 50 >= filtered.length}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            Suivant
+          </button>
         </div>
       )}
     </section>

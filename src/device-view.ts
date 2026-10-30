@@ -16,7 +16,7 @@ export function selectDevices(
     (device) =>
       (options.status === 'all' || device.status === options.status) &&
       normalize(
-        `${deviceName(device)} ${device.ip} ${device.mac ?? ''} ${deviceTypeLabel(device)}`,
+        `${deviceName(device)} ${device.ip} ${device.mac ?? ''} ${deviceTypeLabel(device)} ${(device.tags ?? []).join(' ')}`,
       ).includes(query),
   );
   return filtered.sort((a, b) => {

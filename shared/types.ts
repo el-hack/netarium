@@ -55,6 +55,7 @@ export interface Device extends Observation {
   label: string;
   category: Category;
   notes: string;
+  tags?: string[];
   firstSeen: string;
   lastSeen: string;
   observedAt: string;
