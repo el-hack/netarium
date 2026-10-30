@@ -17,6 +17,7 @@ import { DeviceDrawer } from './components/DeviceDrawer';
 import { History } from './components/History';
 import { Settings } from './components/Settings';
 import { Panel, Skeleton } from './ui/primitives';
+import { Button, IconButton } from './ui/Button';
 const emptyIntelligence: Intelligence = {
   records: [],
   total: 0,
@@ -239,21 +240,22 @@ export default function App() {
           <p>{meta.description}</p>
         </div>
         <div className="heading-actions">
-          <button
-            className="button secondary"
+          <IconButton
+            className="secondary"
             onClick={() => void refresh()}
-            aria-label="Actualiser les observations"
+            label="Actualiser les observations"
           >
             <RefreshCw size={16} />
-          </button>
-          <button
-            className="button primary"
+          </IconButton>
+          <Button
+            variant="primary"
+            busy={scanning}
             disabled={demo || scanning || !network || Boolean(overview.error)}
             onClick={() => void scan()}
           >
-            <Radio size={16} />
+            {!scanning && <Radio size={16} />}
             {scanning ? 'Découverte en cours…' : 'Découvrir le réseau'}
-          </button>
+          </Button>
         </div>
       </div>
       <div className="context-bar">

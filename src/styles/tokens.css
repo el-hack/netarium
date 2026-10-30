@@ -236,6 +236,17 @@ hr {
 .button:hover {
   text-decoration: none;
 }
+.button-spinner {
+  animation: spin 900ms linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.button[aria-busy='true'] {
+  cursor: progress;
+}
 .primary {
   background: var(--primary);
   color: var(--accent-text);
@@ -267,6 +278,10 @@ hr {
 }
 .icon-button:hover:not(:disabled) {
   background: var(--surface-hover);
+  color: var(--text);
+}
+.icon-button.secondary {
+  border-color: var(--border);
   color: var(--text);
 }
 .text-button {
@@ -362,7 +377,12 @@ hr {
 }
 .empty-state > svg {
   color: var(--subtle);
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  box-sizing: content-box;
+  padding: 12px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 .empty-state p {
   font-size: 12px;

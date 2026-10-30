@@ -2,6 +2,14 @@
 
 Vérifié le 30 octobre 2026 sur macOS, Node.js 24 et Google Chrome avec profil isolé.
 
+## Finition des composants — 30 octobre 2026
+
+- Build, TypeScript strict, ESLint, Prettier et 58 tests métier validés.
+- Parcours navigateur complet réussi : 31 audits axe sans anomalie, cinq largeurs, aucune erreur JavaScript ou console. Aux 28 audits précédents s’ajoutent les cartes d’inventaire sur ordinateur et à 320 px, ainsi que la recherche sans résultat.
+- Vérifications ajoutées : effacement de recherche avec retour du focus, tags et accès à l’activité depuis les cartes, recherche sans accents, navigation par flèches/Entrée, restitution du focus après Échap, raccourci depuis le menu mobile et fermeture de fiche visible après défilement.
+- Le test de réouverture de fiche utilise le rôle accessible du champ Notes : son sélecteur textuel exact ne retrouvait pas le champ déjà rempli. La fiche a également été inspectée visuellement avec des données de démonstration.
+- Onglet local rechargé, données et configuration de collecte conservées. Captures de démonstration et archive actualisées.
+
 ## Refonte Trovy — validation supplémentaire du 30 octobre 2026
 
 - Build de production, TypeScript strict, ESLint et 58 tests Node validés après refonte.

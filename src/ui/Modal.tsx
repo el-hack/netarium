@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { X } from 'lucide-react';
+import { IconButton } from './Button';
 export function Modal({
   title,
   onClose,
@@ -29,9 +30,9 @@ export function Modal({
     >
       <header>
         <h2>{title}</h2>
-        <button disabled={busy} className="icon-button" aria-label="Fermer" onClick={onClose}>
+        <IconButton disabled={busy} label="Fermer" onClick={onClose}>
           <X size={18} />
-        </button>
+        </IconButton>
       </header>
       {children}
     </dialog>

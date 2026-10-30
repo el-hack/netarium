@@ -27,6 +27,11 @@ textarea {
   resize: vertical;
   line-height: 1.6;
 }
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: var(--subtle);
+}
 input[type='checkbox'] {
   width: 16px;
   height: 16px;
@@ -74,6 +79,22 @@ input[type='checkbox'] {
   padding: 7px 0;
   min-height: 33px;
   width: 200px;
+  flex: 1;
+}
+.search-field:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.search-field input:focus-visible {
+  outline: none;
+}
+.search-field input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.clear-search:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+  border-radius: 4px;
 }
 .clear-search {
   min-width: 25px;
@@ -385,6 +406,14 @@ dialog::backdrop {
   font-size: 14px;
   min-height: 37px;
 }
+.command-results > button > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.command-results > button:focus-visible {
+  background: var(--surface-hover);
+  outline-offset: -2px;
+}
 .command-results button > svg:last-child {
   margin-left: auto;
   color: var(--muted);
@@ -400,6 +429,10 @@ dialog::backdrop {
   padding: 12px 20px;
   border-top: 1px solid var(--line);
   font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .drawer {
   height: 100dvh;
@@ -422,6 +455,20 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+}
+.drawer-savebar {
+  position: sticky;
+  bottom: -25px;
+  background: var(--surface);
+  padding: 16px 0;
+  box-shadow: 0 -8px 16px var(--surface);
+  z-index: 1;
 }
 .drawer-top .eyebrow {
   margin: 0;

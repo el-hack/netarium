@@ -6,7 +6,6 @@ import {
   Moon,
   Menu,
   X,
-  Command,
   ArrowUpRight,
   FlaskConical,
   Radio,
@@ -15,7 +14,7 @@ import {
 } from 'lucide-react';
 import { navigation, type Page } from '../navigation';
 import type { Device } from '../../shared/types';
-import { deviceName } from '../lib';
+import { CommandPalette } from './CommandPalette';
 export function WorkspaceChrome({
   page,
   devices,
@@ -38,6 +37,8 @@ export function WorkspaceChrome({
   );
   const [menu, setMenu] = useState(false);
   const [command, setCommand] = useState(false);
+  const commandOpener = useRef<HTMLElement | null>(null);
+  const commandTrigger = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLElement>(null);
   const [mobile, setMobile] = useState(() => matchMedia('(max-width:760px)').matches);
   useEffect(() => {
@@ -86,13 +87,17 @@ export function WorkspaceChrome({
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setMenu(false);
-        setCommand((v) => !v);
+        if (!command)
+          commandOpener.current = menu
+            ? commandTrigger.current
+            : (document.activeElement as HTMLElement);
+        setCommand(!command);
       }
       if (e.key === 'Escape') setMenu(false);
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, []);
+  }, [command, menu]);
   const go = (p: Page) => {
     onNavigate(p);
     setMenu(false);
@@ -208,7 +213,11 @@ export function WorkspaceChrome({
           <div>
             <button
               className="command-trigger"
-              onClick={() => setCommand(true)}
+              ref={commandTrigger}
+              onClick={(event) => {
+                commandOpener.current = event.currentTarget;
+                setCommand(true);
+              }}
               aria-label="Recherche globale"
             >
               <Search size={16} />
@@ -252,6 +261,7 @@ export function WorkspaceChrome({
       </div>
       {command && (
         <CommandPalette
+          returnFocus={commandOpener.current}
           devices={devices}
           onClose={() => setCommand(false)}
           onNavigate={go}
@@ -262,77 +272,5 @@ export function WorkspaceChrome({
         />
       )}
     </div>
-  );
-}
-function CommandPalette({
-  devices,
-  onClose,
-  onNavigate,
-  onDevice,
-}: {
-  devices: Device[];
-  onClose: () => void;
-  onNavigate: (p: Page) => void;
-  onDevice: (id: string) => void;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [q, setQ] = useState('');
-  useEffect(() => {
-    const dialog = ref.current;
-    dialog?.showModal();
-    return () => dialog?.close();
-  }, []);
-  const match = (s: string) => s.toLowerCase().includes(q.toLowerCase());
-  return (
-    <dialog
-      ref={ref}
-      className="command-dialog"
-      aria-label="Recherche et commandes"
-      onCancel={onClose}
-      onClick={(e) => {
-        if (e.target === ref.current) onClose();
-      }}
-    >
-      <div className="command-input">
-        <Search size={19} />
-        <input
-          autoFocus
-          aria-label="Rechercher dans Netarium"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Appareil, IP, vue…"
-        />
-        <button className="icon-button" onClick={onClose} aria-label="Fermer la recherche">
-          <X size={18} />
-        </button>
-      </div>
-      <div className="command-results">
-        <span className="eyebrow">NAVIGATION</span>
-        {navigation
-          .filter((n) => match(n.label))
-          .map((n) => (
-            <button key={n.id} onClick={() => onNavigate(n.id)}>
-              <n.icon size={18} />
-              {n.label}
-              <ArrowUpRight size={14} />
-            </button>
-          ))}
-        <span className="eyebrow">APPAREILS · ACTIVITY EXPLORER</span>
-        {devices
-          .filter((d) => match(`${deviceName(d)} ${d.ip}`))
-          .slice(0, 30)
-          .map((d) => (
-            <button key={d.id} onClick={() => onDevice(d.id)}>
-              <Command size={17} />
-              <span>
-                {deviceName(d)}
-                <small>{d.ip}</small>
-              </span>
-              <ArrowUpRight size={14} />
-            </button>
-          ))}
-      </div>
-      <p className="command-help">Tab pour parcourir · Entrée pour ouvrir · Échap pour fermer</p>
-    </dialog>
   );
 }

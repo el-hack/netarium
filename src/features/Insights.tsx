@@ -37,7 +37,8 @@ export function OverviewPage({
           <span>Découverte réseau · télémétrie selon les sources</span>
         </span>
         <button className="text-button" onClick={onSources}>
-          {activeSources} sources activées <ArrowUpRight size={15} />
+          {activeSources} source{activeSources > 1 ? 's' : ''} activée{activeSources > 1 ? 's' : ''}{' '}
+          <ArrowUpRight size={15} />
         </button>
       </div>
       <div className="metric-strip">

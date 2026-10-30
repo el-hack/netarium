@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Layers, Maximize2, Minus, Plus, ArrowUpRight, Info, Search } from 'lucide-react';
+import { Box, Layers, Maximize2, Minus, Plus, ArrowUpRight, Info } from 'lucide-react';
+import { SearchField } from '../ui/SearchField';
+import { normalizeSearch } from '../search';
 import {
   categories,
   type Device,
@@ -66,7 +68,7 @@ export function NetworkExplorer({
   const filtered = actual.filter(
     (d) =>
       (category === 'all' || effectiveCategory(d) === category) &&
-      `${deviceName(d)} ${d.ip}`.toLowerCase().includes(query.toLowerCase()),
+      normalizeSearch(`${deviceName(d)} ${d.ip}`).includes(normalizeSearch(query)),
   );
   const signature = JSON.stringify(filtered);
   const stable = useMemo<Device[]>(() => JSON.parse(signature), [signature]);
@@ -102,15 +104,12 @@ export function NetworkExplorer({
   return (
     <>
       <div className="filter-bar">
-        <label className="search-field">
-          <Search size={16} />
-          <input
-            aria-label="Rechercher sur la carte"
-            value={query}
-            placeholder="Nom ou adresse IP…"
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </label>
+        <SearchField
+          label="Rechercher sur la carte"
+          value={query}
+          placeholder="Nom ou adresse IP…"
+          onChange={setQuery}
+        />
         <label>
           Catégorie
           <select value={category} onChange={(e) => setCategory(e.target.value)}>

@@ -90,7 +90,15 @@ try {
   await expect(page.getByRole('button', { name: 'Détails de NAS du bureau' })).toBeVisible();
   await page.getByLabel('Rechercher un appareil').fill('Téléphone');
   await expect(page.locator('tbody tr')).toHaveCount(1);
-  await page.getByLabel('Rechercher un appareil').fill('');
+  await page.getByRole('button', { name: 'Effacer la recherche', exact: true }).click();
+  await expect(page.getByLabel('Rechercher un appareil')).toBeFocused();
+  await expect(page.locator('tbody tr')).toHaveCount(4);
+  await page.getByRole('button', { name: 'Vue cartes', exact: true }).click();
+  await expect(page.locator('.device-cards')).toBeVisible();
+  await expect(page.locator('.device-cards')).toContainText('Personnel');
+  await audit('inventory cards');
+  await page.getByRole('button', { name: 'Activité de NAS du bureau', exact: true }).click();
+  await expect(page.locator('.device-masthead')).toContainText('NAS du bureau');
   console.log('Browser: network explorer, persisted 2D layout and activity navigation');
   await nav('Network Explorer');
   await expect(page.locator('canvas')).toHaveCount(1);
@@ -180,11 +188,19 @@ try {
   await expect(page.getByRole('button', { name: 'Supprimer définitivement' })).toBeDisabled();
   await page.getByRole('button', { name: 'Fermer', exact: true }).click();
   await page.getByRole('button', { name: 'Recherche globale', exact: true }).click();
+  await page.getByLabel('Rechercher dans Netarium').fill('aucun-appareil-correspondant');
+  await expect(page.getByRole('heading', { name: 'Aucun résultat', exact: true })).toBeVisible();
+  await audit('command palette empty');
+  await page.getByLabel('Rechercher dans Netarium').fill('telephone');
+  await page.keyboard.press('ArrowDown');
+  await expect(
+    page.getByRole('dialog').getByRole('button', { name: /iphone.local/ }),
+  ).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Recherche globale', exact: true })).toBeFocused();
+  await page.getByRole('button', { name: 'Recherche globale', exact: true }).click();
   await page.getByLabel('Rechercher dans Netarium').fill('NAS du bureau');
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: /NAS du bureau/ })
-    .click();
+  await page.keyboard.press('Enter');
   await expect(page.locator('.device-masthead')).toContainText('NAS du bureau');
   console.log('Browser: demo isolation and all pages in both themes');
   await page.getByRole('button', { name: 'Explorer la démo', exact: true }).click();
@@ -245,6 +261,20 @@ try {
     fullPage: true,
     animations: 'disabled',
   });
+  await page.getByRole('button', { name: 'Vue cartes', exact: true }).click();
+  await page.screenshot({
+    path: '../netarium-appareils.png',
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await page.setViewportSize({ width: 320, height: 900 });
+  assert.equal(
+    await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+    false,
+    'Inventory cards mobile overflow',
+  );
+  await audit('inventory cards mobile');
+  await page.setViewportSize({ width: 1440, height: 1050 });
   await nav('Network Explorer');
   await expect(page.locator('.scene-labels[data-ready="true"]')).toBeVisible();
   await page.screenshot({ path: '../netarium-carte.png', fullPage: true, animations: 'disabled' });
@@ -282,10 +312,19 @@ try {
   await expect(
     page.getByRole('button', { name: 'Ouvrir la navigation', exact: true }),
   ).toBeFocused();
+  await page.getByRole('button', { name: 'Ouvrir la navigation', exact: true }).click();
+  await page.keyboard.press('Control+k');
+  await expect(page.getByRole('dialog', { name: 'Recherche et commandes' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Recherche globale', exact: true })).toBeFocused();
   await page.setViewportSize({ width: 1440, height: 1050 });
   await page.getByRole('button', { name: 'Quitter la démo', exact: true }).click();
   await nav('Devices');
   await page.getByRole('button', { name: 'Détails de NAS du bureau', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Notes', exact: true }).scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole('button', { name: 'Fermer les détails', exact: true }),
+  ).toBeInViewport();
   await page.getByLabel('Nom personnalisé').fill('Modification non enregistrée');
   await page.keyboard.press('Escape');
   await expect(page.getByText('Conserver vos modifications ?')).toBeVisible();
@@ -298,7 +337,7 @@ try {
     JSON.stringify(
       {
         status: violations.length || errors.length ? 'failed' : 'passed',
-        axeAudits: 28,
+        axeAudits: 31,
         viewports: 5,
         violations,
         errors,
@@ -309,6 +348,17 @@ try {
   );
   assert.deepEqual(errors, [], 'Browser errors');
   assert.deepEqual(violations, [], 'Accessibility findings');
+} catch (error) {
+  const failedPage = browser?.contexts()[0]?.pages()[0];
+  if (failedPage) {
+    await failedPage
+      .screenshot({ path: '/tmp/netarium-browser-failure.png', fullPage: true })
+      .catch(() => {});
+    await writeFile('/tmp/netarium-browser-failure.html', await failedPage.content()).catch(
+      () => {},
+    );
+  }
+  throw error;
 } finally {
   await browser?.close();
   server.kill('SIGTERM');

@@ -4,6 +4,7 @@ import { X, Check, Fingerprint, Info } from 'lucide-react';
 import { categories, type Category, type Device } from '../../shared/types';
 import { api, categoryLabels, dateTime, deviceName, sourceLabels, statusLabel } from '../lib';
 import { DeviceIcon } from './Icons';
+import { Button, IconButton } from '../ui/Button';
 export function DeviceDrawer({
   device,
   onClose,
@@ -90,18 +91,13 @@ export function DeviceDrawer({
         if (event.target === dialog.current) requestClose();
       }}
     >
+      <div className="drawer-top">
+        <span className="eyebrow">FICHE APPAREIL</span>
+        <IconButton onClick={requestClose} disabled={busy} label="Fermer les détails">
+          <X size={20} />
+        </IconButton>
+      </div>
       <div className="drawer-content">
-        <div className="drawer-top">
-          <span className="eyebrow">FICHE APPAREIL</span>
-          <button
-            className="icon-button"
-            onClick={requestClose}
-            disabled={busy}
-            aria-label="Fermer les détails"
-          >
-            <X size={20} />
-          </button>
-        </div>
         <div className="drawer-identity">
           <span className="device-icon large sage">
             <DeviceIcon device={device} size={30} />
@@ -124,9 +120,9 @@ export function DeviceDrawer({
           </div>
         </div>
         {onActivity && (
-          <button disabled={dirty} className="button primary full" onClick={onActivity}>
+          <Button disabled={dirty} variant="secondary" className="full" onClick={onActivity}>
             Ouvrir Activity Explorer
-          </button>
+          </Button>
         )}
         <IdentificationCard device={device} />
         <dl className="properties">
@@ -260,10 +256,16 @@ export function DeviceDrawer({
               )}
               <div className="drawer-savebar">
                 <span>{dirty ? 'Modifications non enregistrées' : 'Votre fiche est à jour'}</span>
-                <button className="button primary full" disabled={busy || !dirty} type="submit">
-                  <Check size={16} />
+                <Button
+                  variant="primary"
+                  className="full"
+                  busy={busy}
+                  disabled={!dirty}
+                  type="submit"
+                >
+                  {!busy && <Check size={16} />}
                   {busy ? 'Enregistrement…' : 'Enregistrer les modifications'}
-                </button>
+                </Button>
               </div>
             </>
           )}

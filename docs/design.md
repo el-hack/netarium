@@ -8,6 +8,8 @@ Langage adapté depuis les composants et tokens de l’application Trovy : surfa
 
 Les feuilles séparent tokens, structure, présentation des données, formulaires, carte et adaptations. La refonte remplace les règles existantes, sans feuille de surcharge ni nouveau framework. Primitives React : Panel, Metric, Empty, Skeleton, SourceBadge/Provenance, Modal, TrafficChart.
 
+Les contrôles partagés `Button`, `IconButton` et `SearchField` définissent les états occupé/désactivé, les noms accessibles et l’effacement avec restitution du focus. Un bouton est de type `button` par défaut ; les soumissions optent explicitement pour `submit`. La normalisation de recherche est commune à l’inventaire, la carte et la palette. La palette est séparée de la structure de navigation pour conserver une responsabilité unique.
+
 - **Structure** : navigation de 248 px (220 px en largeur intermédiaire), trois groupes, espace principal encadré et arrondi, recherche globale et contexte réseau/période conservé dans l’URL. Thème clair pour les nouvelles installations, préférence déjà enregistrée conservée. La couleur de la barre système suit le thème.
 - **Overview** : bande de visibilité, indicateurs séparés, graphique et état des sources, puis observations et inventaire. Aucun score arbitraire de santé.
 - **Network Explorer** : surface de carte, contrôles, filtre d’identité, inspecteur latéral et sélection historique. Liens explicités ; accès direct à l’activité.
@@ -18,6 +20,8 @@ Les feuilles séparent tokens, structure, présentation des données, formulaire
 ## Interaction et accessibilité
 
 Les dialogues utilisent `<dialog>` et son confinement natif du focus. Le menu mobile confine/restaure le focus, rend le contenu inerte et se ferme avec Échap. La palette est accessible par bouton ou ⌘/Ctrl K. Le lien d’évitement cible le contenu sans effacer la navigation par URL.
+
+La palette propose un état vide explicite, un compte de résultats, le parcours par flèches, Début/Fin et Entrée, puis restitue le focus à son déclencheur à la fermeture. Les raccourcis ne perturbent pas la composition de texte. Les cartes d’inventaire affichent tags et dernier relevé, avec des actions distinctes pour la fiche et l’activité. Changer la recherche, le filtre ou le tri ramène la pagination à la première page. La synthèse d’activité montre cinq observations et un lien vers le journal complet. L’en-tête de fiche reste visible pendant le défilement ; l’enregistrement dispose d’un état occupé explicite.
 
 Les formulaires ont des labels, une validation serveur, un retour d’erreur et des boutons désactivés pendant les mutations. Un rafraîchissement ne détruit pas les saisies. La fiche protège les modifications non enregistrées. Les états inconnus sont affichés comme absents/non mesurés, sans faux zéro.
 

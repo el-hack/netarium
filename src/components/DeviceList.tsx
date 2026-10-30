@@ -1,9 +1,11 @@
-import { ArrowUpRight, ArrowDownUp, Search, Monitor, X, List, LayoutGrid } from 'lucide-react';
+import { ArrowUpRight, ArrowDownUp, Search, Monitor, List, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import type { Device } from '../../shared/types';
 import { deviceTypeLabel, deviceName, sourceLabels, statusLabel, dateTime } from '../lib';
 import { selectDevices, type DeviceFilter, type DeviceSort } from '../device-view';
 import { DeviceIcon } from './Icons';
+import { SearchField } from '../ui/SearchField';
+import { Button } from '../ui/Button';
 const filters: { id: DeviceFilter; label: string }[] = [
   { id: 'all', label: 'Tous' },
   { id: 'observed', label: 'Observés' },
@@ -46,25 +48,15 @@ export function DeviceList({
           </h2>
         </div>
         <div className="list-tools">
-          <label className="search-field">
-            <Search size={18} />
-            <input
-              type="search"
-              aria-label="Rechercher un appareil"
-              placeholder="Rechercher un appareil…"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            {query && (
-              <button
-                className="clear-search"
-                onClick={() => setQuery('')}
-                aria-label="Effacer la recherche"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </label>
+          <SearchField
+            label="Rechercher un appareil"
+            placeholder="Rechercher un appareil…"
+            value={query}
+            onChange={(value) => {
+              setQuery(value);
+              setPage(0);
+            }}
+          />
           <div className="segmented view-switch" aria-label="Présentation de l’inventaire">
             <button
               className={view === 'list' ? 'selected' : ''}
@@ -92,7 +84,10 @@ export function DeviceList({
               key={item.id}
               aria-pressed={filter === item.id}
               className={filter === item.id ? 'active' : ''}
-              onClick={() => setFilter(item.id)}
+              onClick={() => {
+                setFilter(item.id);
+                setPage(0);
+              }}
             >
               {item.label}
               <span>
@@ -108,7 +103,10 @@ export function DeviceList({
           <select
             aria-label="Trier les appareils"
             value={sort}
-            onChange={(event) => setSort(event.target.value as DeviceSort)}
+            onChange={(event) => {
+              setSort(event.target.value as DeviceSort);
+              setPage(0);
+            }}
           >
             <option value="name">Par nom</option>
             <option value="ip">Par adresse IP</option>
@@ -182,20 +180,31 @@ export function DeviceList({
           </div>
           <div className="device-cards">
             {visible.map((device) => (
-              <button
-                className="device-card"
-                key={device.id}
-                onClick={() => onSelect(device)}
-                aria-label={`Fiche de ${deviceName(device)}`}
-              >
-                <span className="device-card-top">
-                  <span className={`device-icon ${device.role === 'self' ? 'sage' : ''}`}>
-                    <DeviceIcon device={device} size={24} />
+              <article className="device-card" key={device.id}>
+                <button
+                  className="device-card-open"
+                  type="button"
+                  onClick={() => onSelect(device)}
+                  aria-label={`Fiche de ${deviceName(device)}`}
+                >
+                  <span className="device-card-top">
+                    <span className={`device-icon ${device.role === 'self' ? 'sage' : ''}`}>
+                      <DeviceIcon device={device} size={24} />
+                    </span>
+                    <ArrowUpRight size={17} />
                   </span>
-                  <ArrowUpRight size={17} />
-                </span>
-                <strong>{deviceName(device)}</strong>
-                <span className="device-card-type">{subtitle(device)}</span>
+                  <strong>{deviceName(device)}</strong>
+                  <span className="device-card-type">{subtitle(device)}</span>
+                </button>
+                {Boolean(device.tags?.length) && (
+                  <div className="device-tags">
+                    {device.tags!.map((tag) => (
+                      <span key={tag} className="soft-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <span className="device-card-bottom">
                   <span className="mono">{device.ip}</span>
                   <span className={`status ${device.status}`}>
@@ -203,7 +212,16 @@ export function DeviceList({
                     {statusLabel(device)}
                   </span>
                 </span>
-              </button>
+                <small>Dernier relevé · {dateTime(device.lastSeen)}</small>
+                {onActivity && (
+                  <Button
+                    onClick={() => onActivity(device.id)}
+                    aria-label={`Activité de ${deviceName(device)}`}
+                  >
+                    Explorer l’activité <ArrowUpRight size={14} />
+                  </Button>
+                )}
+              </article>
             ))}
           </div>
           <div className="inventory-footer">

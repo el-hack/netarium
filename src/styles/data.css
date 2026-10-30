@@ -13,6 +13,13 @@
   gap: 16px;
   padding: 20px 24px;
   border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.section-heading > div {
+  min-width: 0;
+}
+.section-heading > .text-button {
+  flex-shrink: 0;
 }
 .section-heading .eyebrow {
   font-size: 11px;
@@ -54,6 +61,7 @@
 .stat > small {
   font-size: 12px;
   line-height: 1.6;
+  margin-top: auto;
 }
 .panel > .metric-strip {
   padding: 20px;
@@ -505,6 +513,12 @@ td code {
   border-color: var(--text);
   color: var(--text);
 }
+.activity-tabs > button:hover {
+  color: var(--text);
+}
+.activity-tabs > button:focus-visible {
+  outline-offset: -4px;
+}
 .activity-context {
   display: flex;
   align-items: center;
@@ -689,7 +703,7 @@ td code {
   padding: 20px;
 }
 .device-card {
-  background: var(--surface-raised);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
@@ -699,6 +713,47 @@ td code {
   gap: 8px;
   color: var(--text);
   min-width: 0;
+}
+.device-card-open {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+  min-width: 0;
+  border-radius: var(--radius-sm);
+}
+.device-card-open strong {
+  overflow-wrap: anywhere;
+}
+.device-card-open:hover strong {
+  color: var(--accent);
+}
+.device-card-open .device-card-top {
+  width: 100%;
+}
+.device-card-type {
+  font-size: 12px;
+  color: var(--muted);
+}
+.device-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.device-tags .soft-tag {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.device-card > .button {
+  margin-top: auto;
+  width: 100%;
+}
+.device-card-bottom {
+  width: 100%;
+  flex-wrap: wrap;
 }
 .device-card:hover {
   border-color: var(--accent);

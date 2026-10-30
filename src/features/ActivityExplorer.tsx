@@ -8,6 +8,7 @@ import { dateTime, deviceName, deviceTypeLabel } from '../lib';
 import { DeviceIcon } from '../components/Icons';
 import { Empty, Metric, Panel, SourceBadge, bytes, rate } from '../ui/primitives';
 import { TrafficChart } from '../ui/TrafficChart';
+import { SearchField } from '../ui/SearchField';
 export const activityTabs = [
   ['summary', 'Vue générale'],
   ['applications', 'Applications'],
@@ -180,7 +181,18 @@ export function ActivityExplorer({
               </div>
             </Panel>
           </div>
-          <RecordTimeline records={records.slice(0, 12)} />
+          <RecordTimeline
+            records={records.slice(0, 5)}
+            actions={
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => onChange({ tab: 'timeline', offset: null })}
+              >
+                Toutes les observations <ArrowUpRight size={14} />
+              </button>
+            }
+          />
         </>
       )}
       {selectedTab === 'bandwidth' && (
@@ -281,26 +293,27 @@ export function ActivityExplorer({
 }
 function Search({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <label className="activity-search">
-      Filtrer les observations
-      <input
-        type="search"
+    <div className="activity-search">
+      <SearchField
+        label="Filtrer les observations"
         placeholder="Domaine, processus, destination…"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
       />
-    </label>
+    </div>
   );
 }
 export function RecordTimeline({
   records,
   onDevice,
+  actions,
 }: {
   records: ActivityRecord[];
   onDevice?: (id: string) => void;
+  actions?: import('react').ReactNode;
 }) {
   return (
-    <Panel title="Fil des observations" kicker="TIMELINE">
+    <Panel title="Fil des observations" kicker="TIMELINE" actions={actions}>
       {records.length ? (
         <ol className="event-timeline">
           {records.map((r) => (
