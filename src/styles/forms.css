@@ -518,3 +518,67 @@
 .discard-notice .button {
   font-size: 12px;
 }
+
+.identification-card {
+  background: #f5f7f1;
+  border: 1px solid #dfe6d7;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 18px;
+}
+.identification-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #4b6741;
+}
+.identification-heading h3 {
+  font-size: 13px;
+}
+.identification-result {
+  display: block;
+  font-size: 18px;
+  margin: 14px 0 9px;
+}
+.identification-confidence {
+  display: block;
+  color: #526946;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.identification-card p,
+.identification-card small {
+  color: #56694d;
+  font-size: 12px;
+  line-height: 1.75;
+  display: block;
+  margin-top: 12px;
+}
+.identification-card ul {
+  padding: 0;
+  list-style: none;
+  margin: 13px 0;
+}
+.identification-card li {
+  border-top: 1px solid #dfe6d7;
+  padding: 10px 0;
+  font-size: 11px;
+}
+.identification-card li span {
+  display: block;
+  color: #56694d;
+  margin-bottom: 6px;
+}
+.identification-card code {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.identification-card details {
+  margin-top: 16px;
+}
+.identification-card summary {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 8px 0;
+  color: #3f6235;
+}

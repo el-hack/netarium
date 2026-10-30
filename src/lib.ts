@@ -1,3 +1,4 @@
+import { effectiveCategory } from '../shared/identification';
 import type { Category, Device, EvidenceSource } from '../shared/types';
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, {
@@ -20,6 +21,8 @@ export const categoryLabels: Record<Category, string> = {
   unknown: 'À identifier',
   computer: 'Ordinateur',
   phone: 'Téléphone',
+  tablet: 'Tablette',
+  printer: 'Imprimante',
   media: 'Multimédia',
   storage: 'Stockage',
   iot: 'Objet connecté',
@@ -55,3 +58,12 @@ export const statusLabel = (device: Device) =>
     : device.status === 'cached'
       ? 'Dans le cache'
       : 'Non revu';
+
+export function deviceTypeLabel(device: Pick<Device, 'category' | 'identification'>) {
+  const category = effectiveCategory(device);
+  const label = categoryLabels[category];
+  if (category === 'unknown') return label;
+  if (device.category !== 'unknown') return `${label} · choix manuel`;
+  if (device.identification?.confidence === 'high') return `${label} · local`;
+  return `${label} ${device.identification?.confidence === 'low' ? 'possible' : 'probable'}`;
+}

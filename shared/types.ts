@@ -2,6 +2,8 @@ export const categories = [
   'unknown',
   'computer',
   'phone',
+  'tablet',
+  'printer',
   'media',
   'storage',
   'iot',
@@ -18,6 +20,24 @@ export interface NetworkInterface {
   scanCidr: string;
   gateway: string | null;
 }
+export interface AdvertisedService {
+  type: string;
+  name: string;
+  host: string;
+  model: string | null;
+}
+export interface IdentificationEvidence {
+  source: 'local' | 'hostname' | 'mdns-model' | 'mdns-service';
+  value: string;
+  category: Category;
+}
+export interface Identification {
+  version: 1;
+  category: Category;
+  confidence: 'none' | 'low' | 'medium' | 'high';
+  reason: 'matched' | 'insufficient' | 'conflicting';
+  evidence: IdentificationEvidence[];
+}
 export interface Observation {
   ip: string;
   mac: string | null;
@@ -26,8 +46,10 @@ export interface Observation {
   source: EvidenceSource;
   reachable: boolean;
   role: 'self' | 'gateway' | 'device';
+  services?: AdvertisedService[];
 }
 export interface Device extends Observation {
+  identification?: Identification;
   id: string;
   network: string;
   label: string;

@@ -1,5 +1,5 @@
 import type { Device } from '../shared/types';
-import { categoryLabels, deviceName } from './lib';
+import { deviceTypeLabel, deviceName } from './lib';
 export type DeviceFilter = 'all' | Device['status'];
 export type DeviceSort = 'name' | 'ip' | 'recent';
 const normalize = (value: string) =>
@@ -16,7 +16,7 @@ export function selectDevices(
     (device) =>
       (options.status === 'all' || device.status === options.status) &&
       normalize(
-        `${deviceName(device)} ${device.ip} ${device.mac ?? ''} ${categoryLabels[device.category]}`,
+        `${deviceName(device)} ${device.ip} ${device.mac ?? ''} ${deviceTypeLabel(device)}`,
       ).includes(query),
   );
   return filtered.sort((a, b) => {

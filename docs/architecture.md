@@ -39,3 +39,7 @@ SQLite évite un serveur externe et fournit des transactions. Le mode WAL et un 
 Tests de parsing, périmètre, identité et transactions, tests API avec vraie base SQLite en mémoire, tests navigateur avec vraie API et base temporaire. Le collecteur du test navigateur est déterministe et ne fait pas partie du service de production.
 
 La première plateforme validée est macOS. Les formats de voisinage Linux et Windows sont testés, mais l’exécution sur ces systèmes reste à valider. Un scan réussi ne garantit jamais une couverture complète du réseau. Il n’existe pas encore de découverte IPv6, de source routeur, de capture des flux ou de binaire signé.
+
+## Identification
+
+Le domaine partagé possède les règles et la priorité des annotations. Le collecteur mDNS est isolé de la découverte d’hôtes et ne change pas la preuve de présence. Les indices et la suggestion sont figés au moment de la persistance. Voir [la conception détaillée](identification.md).

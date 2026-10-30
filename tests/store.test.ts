@@ -84,3 +84,23 @@ test('a cancelled scan preserves observations in other network scopes', () => {
   assert.equal(store.scan(second.id)?.status, 'cancelled');
   store.close();
 });
+
+test('inferences and raw clues are frozen in snapshots while manual overrides survive rediscovery', () => {
+  const store = new Store(':memory:');
+  try {
+    const first = store.beginScan('en0', '192.168.1.0/24', 'discovery');
+    store.finishScan(first.id, [{ ...observation(), hostname: 'iPhone.local' }], []);
+    const original = store.devices()[0];
+    assert.equal(original.identification?.category, 'phone');
+    assert.equal(original.category, 'unknown');
+    store.annotate(original.id, { label: 'Mon appareil', category: 'computer', notes: '' });
+    const next = store.beginScan('en0', first.network, 'discovery');
+    store.finishScan(next.id, [{ ...observation(), hostname: null }], []);
+    assert.equal(store.devices()[0].category, 'computer');
+    assert.equal(store.devices()[0].identification?.category, 'unknown');
+    assert.equal(store.snapshot(first.id)?.devices[0].identification?.category, 'phone');
+    assert.equal(store.snapshot(first.id)?.devices[0].category, 'unknown');
+  } finally {
+    store.close();
+  }
+});

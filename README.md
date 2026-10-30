@@ -29,6 +29,7 @@ L’application ne demande jamais de lancer tout le serveur en administrateur. L
 ## Fonctionnalités
 
 - Carte 3D avec rotation, zoom, recentrage et vue de dessus 2D ; chargement du moteur graphique à la demande.
+- Identification automatique expliquée : noms et annonces Bonjour/mDNS, niveau de confiance, choix manuel prioritaire. [Fonctionnement et limites](docs/identification.md).
 - Inventaire consultable au clavier, recherche insensible aux accents, filtres d’état, tri et vues liste/cartes.
 - Fiches avec nom, catégorie et notes personnalisées ; provenance de chaque observation.
 - Identité par adresse MAC quand elle est disponible, repli provisoire sur l’IP dans le périmètre.
@@ -45,7 +46,7 @@ L’application ne demande jamais de lancer tout le serveur en administrateur. L
 | Dans le cache | Une entrée de voisinage existe ; elle ne prouve pas une présence actuelle.                     |
 | Non revu      | Appareil absent du dernier relevé réussi de ce périmètre. Cela ne prouve pas qu’il est éteint. |
 
-La carte représente **l’appartenance logique à un périmètre**. Elle n’invente ni câblage, ni position physique, ni trafic entre appareils. Les catégories personnalisées sont des annotations manuelles ; une adresse IP sans MAC ne permet pas de garantir une identité physique stable. Les MAC privées ou changeantes peuvent créer plusieurs identités.
+La carte représente **l’appartenance logique à un périmètre**. Elle n’invente ni câblage, ni position physique, ni trafic entre appareils. Les catégories automatiques restent des suggestions fondées sur des indices déclarés ; les catégories personnalisées sont des annotations manuelles ; une adresse IP sans MAC ne permet pas de garantir une identité physique stable. Les MAC privées ou changeantes peuvent créer plusieurs identités.
 
 ## Données et confidentialité
 

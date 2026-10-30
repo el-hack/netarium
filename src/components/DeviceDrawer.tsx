@@ -1,3 +1,4 @@
+import { IdentificationCard } from './IdentificationCard';
 import { useEffect, useRef, useState } from 'react';
 import { X, Check, Fingerprint, Info } from 'lucide-react';
 import { categories, type Category, type Device } from '../../shared/types';
@@ -95,6 +96,7 @@ export function DeviceDrawer({
             </p>
           </div>
         </div>
+        <IdentificationCard device={device} />
         <dl className="properties">
           <div>
             <dt>Adresse IPv4</dt>
@@ -168,11 +170,14 @@ export function DeviceDrawer({
             >
               {categories.map((value) => (
                 <option key={value} value={value}>
-                  {categoryLabels[value]}
+                  {value === 'unknown' ? 'Automatique (selon les indices)' : categoryLabels[value]}
                 </option>
               ))}
             </select>
           </label>
+          <p className="hint">
+            Un choix manuel remplace la suggestion. « Automatique » réactive la détection.
+          </p>
           <label className="field">
             Notes
             <textarea

@@ -1,3 +1,4 @@
+import { identifyDevice } from '../shared/identification.js';
 import { DatabaseSync } from 'node:sqlite';
 import { randomUUID } from 'node:crypto';
 import type { Category, Device, Observation, Scan, Settings, Snapshot } from '../shared/types.js';
@@ -79,8 +80,10 @@ export class Store {
     return scan;
   }
   private rowDevice(row: DeviceRow): Device {
+    const observation = JSON.parse(row.last_data) as Device;
     return {
-      ...JSON.parse(row.last_data),
+      ...observation,
+      identification: observation.identification ?? identifyDevice(observation),
       id: row.id,
       network: row.network,
       label: row.label,
@@ -115,6 +118,7 @@ export class Store {
         }
         const device: Device = {
           ...observation,
+          identification: identifyDevice(observation),
           mac: observation.mac ?? row?.mac ?? null,
           id: row?.id ?? randomUUID(),
           network: scan.network,

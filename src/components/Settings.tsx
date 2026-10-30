@@ -129,6 +129,11 @@ export function Settings({
         <section className="panel capabilities">
           <span className="eyebrow">DIAGNOSTIC LOCAL</span>
           <h2>Tout sous les yeux.</h2>
+          <p className="hint">
+            L’identification utilise les noms et les annonces Bonjour/mDNS lors d’une découverte. Un
+            appareil silencieux peut rester à identifier. Le mode cache ne lance pas de recherche
+            mDNS.
+          </p>
           {tools.map((tool) => (
             <div className="capability" key={tool.title}>
               <span className={`capability-icon ${tool.ready ? 'ready' : ''}`}>

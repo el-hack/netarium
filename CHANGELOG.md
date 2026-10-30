@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- Identification automatique explicable à partir des noms et annonces Bonjour/mDNS, avec confiance qualitative et indices conservés.
+- Distinction entre type matériel et rôle de passerelle, catégories tablette et imprimante, correction manuelle prioritaire et retour au mode automatique.
+- Collecte mDNS bornée et annulable ; conservation des anciens instantanés et colonnes d’identification dans l’export CSV.
+
 ### Changed
 
 - Refonte de l’ensemble des écrans : palette ivoire et sauge, hiérarchie, espacements et contrastes.

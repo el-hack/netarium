@@ -1,3 +1,4 @@
+import { effectiveCategory } from '../../shared/identification';
 import { Network, Radio, Clock3, Fingerprint } from 'lucide-react';
 import type { Device } from '../../shared/types';
 export function Metrics({ devices }: { devices: Device[] }) {
@@ -25,10 +26,8 @@ export function Metrics({ devices }: { devices: Device[] }) {
     },
     {
       label: 'À identifier',
-      value: devices.filter(
-        (device) => device.category === 'unknown' && device.role === 'device' && !device.label,
-      ).length,
-      note: 'Un nom fait la différence',
+      value: devices.filter((device) => effectiveCategory(device) === 'unknown').length,
+      note: 'Type encore inconnu',
       icon: Fingerprint,
       tone: 'blue',
     },

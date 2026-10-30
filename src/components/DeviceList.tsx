@@ -1,7 +1,7 @@
 import { ArrowUpRight, ArrowDownUp, Search, Monitor, X, List, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import type { Device } from '../../shared/types';
-import { categoryLabels, deviceName, sourceLabels, statusLabel, dateTime } from '../lib';
+import { deviceTypeLabel, deviceName, sourceLabels, statusLabel, dateTime } from '../lib';
 import { selectDevices, type DeviceFilter, type DeviceSort } from '../device-view';
 import { DeviceIcon } from './Icons';
 const filters: { id: DeviceFilter; label: string }[] = [
@@ -11,11 +11,8 @@ const filters: { id: DeviceFilter; label: string }[] = [
   { id: 'unseen', label: 'Non revus' },
 ];
 function subtitle(device: Device) {
-  return device.role === 'self'
-    ? 'Cet ordinateur'
-    : device.role === 'gateway' && device.category === 'unknown'
-      ? 'Passerelle'
-      : categoryLabels[device.category];
+  const type = deviceTypeLabel(device);
+  return device.role === 'gateway' ? `${type} · passerelle` : type;
 }
 export function DeviceList({
   devices,

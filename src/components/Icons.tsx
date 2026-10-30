@@ -1,30 +1,35 @@
-import { Monitor, Smartphone, Router, HardDrive, Tv, Lightbulb, CircleHelp } from 'lucide-react';
-import type { Category, Device } from '../../shared/types';
+import { effectiveCategory } from '../../shared/identification';
+import {
+  Monitor,
+  Smartphone,
+  Tablet,
+  Printer,
+  Router,
+  HardDrive,
+  Tv,
+  Lightbulb,
+  CircleHelp,
+} from 'lucide-react';
+import type { Device } from '../../shared/types';
 export function DeviceIcon({
   device,
   size = 18,
 }: {
-  device: Pick<Device, 'category' | 'role'>;
+  device: Pick<Device, 'category' | 'identification'>;
   size?: number;
 }) {
   const icons = {
     computer: Monitor,
     phone: Smartphone,
+    tablet: Tablet,
+    printer: Printer,
     network: Router,
     storage: HardDrive,
     media: Tv,
     iot: Lightbulb,
     unknown: CircleHelp,
   };
-  const category: Category =
-    device.category !== 'unknown'
-      ? device.category
-      : device.role === 'self'
-        ? 'computer'
-        : device.role === 'gateway'
-          ? 'network'
-          : 'unknown';
-  const Icon = icons[category];
+  const Icon = icons[effectiveCategory(device)];
   return <Icon size={size} strokeWidth={1.6} aria-hidden="true" />;
 }
 export function Brand({ small = false }: { small?: boolean }) {

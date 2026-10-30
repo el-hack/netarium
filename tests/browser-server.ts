@@ -62,7 +62,18 @@ const coordinator = new Coordinator(
       {
         ip: count === 1 ? '192.168.50.11' : '192.168.50.12',
         mac: count === 1 ? '02:00:00:00:00:11' : '02:00:00:00:00:12',
-        hostname: count === 1 ? 'telephone.local' : 'tv.local',
+        hostname: count === 1 ? 'iphone.local' : 'tv.local',
+        services:
+          count === 1
+            ? [
+                {
+                  type: 'device-info',
+                  name: 'Téléphone de test',
+                  host: 'iphone.local',
+                  model: 'iPhone15,2',
+                },
+              ]
+            : [],
         vendor: null,
         source: 'ping',
         reachable: true,

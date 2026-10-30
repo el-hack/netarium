@@ -54,6 +54,23 @@ try {
   await page.getByRole('button', { name: 'Recentrer la carte' }).click();
   await page.getByRole('button', { name: '2D', exact: true }).click();
   await page.getByRole('button', { name: '3D', exact: true }).click();
+  const phoneRow = page.locator('tbody tr').filter({ hasText: 'iphone.local' });
+  await expect(phoneRow).toContainText('Téléphone probable');
+  await page.getByRole('button', { name: 'Détails de iphone.local', exact: true }).click();
+  await expect(
+    page.getByRole('region', { name: 'Identification du type d’appareil' }),
+  ).toContainText('iPhone15,2');
+  await expect(page.getByRole('dialog')).toContainText('Confiance modérée');
+  await page.getByLabel('Catégorie', { exact: true }).selectOption('tablet');
+  await page.getByRole('button', { name: 'Enregistrer les modifications' }).click();
+  await expect(phoneRow).toContainText('Tablette · choix manuel');
+  await page.getByRole('button', { name: 'Détails de iphone.local', exact: true }).click();
+  await page.getByLabel('Catégorie', { exact: true }).selectOption('unknown');
+  await page.getByRole('button', { name: 'Enregistrer les modifications' }).click();
+  await expect(phoneRow).toContainText('Téléphone probable');
+  await expect(page.locator('tbody tr').filter({ hasText: 'Passerelle réseau' })).toContainText(
+    'À identifier · passerelle',
+  );
   await page.getByRole('button', { name: 'Détails de nas.local', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   const drawerAudit = await new AxeBuilder({ page })
@@ -200,6 +217,7 @@ try {
         checks: [
           'discovery',
           '3D/2D',
+          'automatic identification, evidence, manual override and reset',
           'device annotations',
           'persistence',
           'search, filters and sorting',

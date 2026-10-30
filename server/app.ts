@@ -1,3 +1,4 @@
+import { effectiveCategory } from '../shared/identification.js';
 import Fastify from 'fastify';
 import { z } from 'zod';
 import type { Capabilities, NetworkInterface } from '../shared/types.js';
@@ -158,10 +159,16 @@ export async function createApp({
         .type('text/csv; charset=utf-8')
         .send(
           '\uFEFF' +
-            keys.join(',') +
+            [...keys, 'effectiveCategory', 'identificationConfidence'].join(',') +
             '\r\n' +
             devices
-              .map((device) => keys.map((key) => csvCell(String(device[key] ?? ''))).join(','))
+              .map((device) =>
+                [
+                  ...keys.map((key) => csvCell(String(device[key] ?? ''))),
+                  csvCell(effectiveCategory(device)),
+                  csvCell(device.identification?.confidence ?? 'none'),
+                ].join(','),
+              )
               .join('\r\n'),
         );
     }

@@ -1,8 +1,9 @@
+import { effectiveCategory } from '../../shared/identification';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { Device } from '../../shared/types';
-import { deviceName } from '../lib';
+import { deviceName, deviceTypeLabel } from '../lib';
 export interface SceneHandle {
   reset: () => void;
   zoom: (direction: number) => void;
@@ -98,14 +99,7 @@ export function createScene(
     const group = new THREE.Group();
     const tone =
       device.status === 'unseen' ? '#b8c2aa' : device.status === 'cached' ? '#c9b48e' : '#88a66a';
-    const category =
-      device.category !== 'unknown'
-        ? device.category
-        : device.role === 'self'
-          ? 'computer'
-          : device.role === 'gateway'
-            ? 'network'
-            : 'unknown';
+    const category = effectiveCategory(device);
     const pedestal = mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.16, 48), '#fdfef8');
     pedestal.position.y = -0.24;
     group.add(pedestal);
@@ -143,13 +137,21 @@ export function createScene(
         led.position.set(-0.3 + i * 0.15, 0.07, 0.385);
         group.add(led);
       }
-    } else if (category === 'phone') {
-      const phone = box(0.58, 1.1, 0.12, tone);
+    } else if (category === 'phone' || category === 'tablet') {
+      const width = category === 'tablet' ? 0.88 : 0.58;
+      const phone = box(width, 1.1, 0.12, tone);
       phone.position.y = 0.4;
       group.add(phone);
-      const glass = box(0.45, 0.83, 0.02, '#e1ecd4');
+      const glass = box(width - 0.13, 0.83, 0.02, '#e1ecd4');
       glass.position.set(0, 0.43, 0.075);
       group.add(glass);
+    } else if (category === 'printer') {
+      const body = box(1.1, 0.55, 0.8, tone);
+      body.position.y = 0.15;
+      group.add(body);
+      const paper = box(0.75, 0.6, 0.03, '#f5f8ee');
+      paper.position.set(0, 0.65, -0.22);
+      group.add(paper);
     } else if (category === 'storage') {
       const tower = box(0.85, 1, 0.6, tone);
       tower.position.y = 0.35;
@@ -220,7 +222,7 @@ export function createScene(
     const button = document.createElement('button');
     button.className = `node-label ${device.status}`;
     button.type = 'button';
-    button.title = `${deviceName(device)} · ${device.ip}`;
+    button.title = `${deviceName(device)} · ${deviceTypeLabel(device)} · ${device.ip}`;
     button.setAttribute('aria-label', `Ouvrir ${deviceName(device)}`);
     button.onclick = () => onSelect(device);
     const title = document.createElement('strong');

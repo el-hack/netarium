@@ -4,7 +4,7 @@ Environnement vérifié : macOS, Node.js 24, Google Chrome dans un profil isolé
 
 ## Résultats
 
-- 23 tests de domaine, de parsing, d’API, de persistance, de commandes système et de sélection d’inventaire réussis.
+- 41 tests de domaine, de parsing, d’API, de persistance, de commandes système et de sélection d’inventaire réussis.
 - TypeScript strict, ESLint et formatage Prettier validés.
 - Construction de production réussie, avec moteur Three.js chargé à la demande.
 - Parcours navigateur réussis : découverte, 3D/2D, édition et conservation des annotations, recherche, filtres, tri, vues liste/cartes, comparaison de deux instantanés, réglages persistants, téléchargement CSV et navigation mobile au clavier (confinement et restitution du focus, Échap). La fermeture d’une fiche modifiée demande de conserver ou abandonner les changements.
@@ -19,6 +19,14 @@ Environnement vérifié : macOS, Node.js 24, Google Chrome dans un profil isolé
 ## Refonte de l’interface
 
 Les écrans Observatoire, Appareils, Chronologie et Réglages ont été inspectés visuellement après la refonte, ainsi que l’observatoire mobile. Le réseau réel fournit deux appareils ; le parcours isolé de test couvre cinq appareils avec des états observé, cache et non revu. Les captures finales se trouvent à côté du projet, hors de Git.
+
+## Identification automatique
+
+- Classification conservatrice, conflits, priorité manuelle, compatibilité avec les données antérieures et conservation des instantanés vérifiées.
+- Transport mDNS testé avec paquets DNS-SD déterministes : filtrage du périmètre, délai, annulation, erreur et plafond de 128 annonces.
+- Parcours navigateur : téléphone probable avec modèle annoncé, correction en tablette, retour au mode automatique, passerelle sans type inventé.
+- Collecte réelle sur macOS réussie : annonces mDNS de l’ordinateur reçues ; la passerelle reste inconnue faute d’indices. Aucun téléphone distant n’a été identifié en situation réelle pendant cette validation.
+- Audit npm après ajout des dépendances mDNS : aucune vulnérabilité connue détectée.
 
 ## Limites de validation
 
