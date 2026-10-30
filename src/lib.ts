@@ -2,6 +2,7 @@ import type { Category, Device, EvidenceSource } from '../shared/types';
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, {
     ...options,
+    signal: options?.signal ?? AbortSignal.timeout(12000),
     headers: { 'Content-Type': 'application/json', 'X-Netarium-Client': '1', ...options?.headers },
   });
   if (!response.ok) {

@@ -83,13 +83,11 @@ export function Activity({
         </span>
         <span className="eyebrow">LOCAL PAR NATURE</span>
         <h3>
-          Votre réseau.
-          <br />
+          Votre réseau. <br />
           Vos données.
         </h3>
         <p>
-          Tout reste sur cet ordinateur.
-          <br />
+          Tout reste sur cet ordinateur. <br />
           Le calme, aussi.
         </p>
         <span className="privacy-note">
