@@ -1,0 +1,181 @@
+.activity-column {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+.activity-panel {
+  flex: 1;
+}
+.activity-panel .section-heading {
+  padding: 21px 19px 13px;
+}
+.activity-panel h2 {
+  font-size: 14px;
+}
+.activity-panel .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.25px;
+}
+.live-dot {
+  width: 5px;
+  height: 5px;
+  background: #9bb283;
+  border-radius: 50%;
+}
+.activity-list {
+  padding: 0 19px;
+  margin: 8px 0 0;
+  list-style: none;
+}
+.activity-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  padding-bottom: 18px;
+}
+.activity-list li:not(:last-child):before {
+  content: '';
+  position: absolute;
+  top: 23px;
+  bottom: 5px;
+  width: 1px;
+  background: #e8ede2;
+  left: 11px;
+}
+.activity-symbol {
+  height: 24px;
+  width: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eff4e7;
+  color: #606c59;
+  flex-shrink: 0;
+}
+.activity-symbol.warning {
+  color: #80643d;
+  background: #f6f0e6;
+}
+.activity-symbol.scanning {
+  background: #e1ecd7;
+  color: #606c59;
+}
+.activity-list strong {
+  font-size: 11px;
+  font-weight: 500;
+  display: block;
+  margin: 4px 0 5px;
+}
+.activity-list p {
+  font-size: 10px;
+  color: #606c59;
+  line-height: 1.7;
+}
+.activity-list time {
+  display: block;
+  margin-top: 6px;
+  color: #606c59;
+  font-size: 9px;
+}
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #606c59;
+  font-weight: 500;
+  padding: 3px 0;
+  white-space: nowrap;
+}
+.text-button:hover {
+  color: #435e33;
+}
+.activity-panel > .text-button {
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 38px);
+  margin: 0 19px;
+  padding: 13px 0;
+}
+.quiet-card {
+  position: relative;
+  padding: 24px 22px;
+  background: #eaf0e1;
+  border: 1px solid #e1e9d6;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: 189px;
+}
+.quiet-card > .eyebrow {
+  font-size: 9px;
+  color: #606c59;
+  letter-spacing: 1.4px;
+}
+.quiet-card h3 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 23px;
+  color: #606c59;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  margin: 8px 0;
+}
+.quiet-card p {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #606c59;
+}
+.privacy-note {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 17px;
+  font-size: 9px;
+  color: #606c59;
+}
+.privacy-note i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #829b69;
+}
+.quiet-illustration {
+  position: absolute;
+  right: 18px;
+  top: 56px;
+  height: 67px;
+  width: 67px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #cbd9ba;
+  border-radius: 50%;
+  color: #606c59;
+  transform: rotate(-10deg);
+}
+.quiet-illustration span {
+  position: absolute;
+  border: 1px solid #d3dfc4;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+}
+.quiet-illustration span:last-child {
+  width: 123px;
+  height: 123px;
+  border-color: #dce5d1;
+}
+.collection-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #606c59;
+  margin: 2px 3px 19px;
+  line-height: 1.6;
+}
+.collection-note .text-button {
+  margin-left: auto;
+  font-size: 10px;
+}

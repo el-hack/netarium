@@ -1,0 +1,89 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 25px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 0;
+}
+.metric {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 0 23px;
+  border-right: 1px solid var(--line);
+}
+.metric:last-child {
+  border: 0;
+}
+.metric-icon {
+  color: #606c59;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #f3f5ee;
+}
+.metric-icon.green {
+  background: #ecf2e6;
+  color: #606c59;
+}
+.metric-icon.sand {
+  background: #f7f0e5;
+  color: #80643d;
+}
+.metric > div {
+  min-width: 0;
+}
+.metric > div > span {
+  font-size: 11px;
+  color: #606c59;
+  display: block;
+  margin-bottom: 11px;
+  white-space: nowrap;
+}
+.metric strong {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.metric small {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #606c59;
+  margin-top: 9px;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.eyebrow {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #606c59;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 23px 25px;
+}
+.observatory-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 265px;
+  gap: 20px;
+  margin-bottom: 19px;
+}
